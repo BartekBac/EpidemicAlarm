@@ -14,5 +14,5 @@ public class Institution extends DBEntity{
     @OneToMany(mappedBy = "institution")
     private List<DataAdministrator> workers;
     @OneToMany(mappedBy = "institution")
-    private List<Case> cases;
+    private List<DiagnosedCase> diagnosedCases;
 }

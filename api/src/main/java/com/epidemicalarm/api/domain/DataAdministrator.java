@@ -14,5 +14,5 @@ public class DataAdministrator extends DBEntity{
     @JoinColumn(name = "institutionId", referencedColumnName = "id")
     private Institution institution;
     @OneToMany(mappedBy = "introducer")
-    private List<Case> cases;
+    private List<DiagnosedCase> diagnosedCases;
 }
