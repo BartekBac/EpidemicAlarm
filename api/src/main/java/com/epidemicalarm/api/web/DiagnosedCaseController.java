@@ -49,6 +49,7 @@ public class DiagnosedCaseController {
         }
     }
 
+    // TODO: eventually move checking presence also to persistence and use only try/catch blocks in controllers
     @DeleteMapping("/{id}")
     public void deleteDiagnosedCase(@PathVariable(value = "id") long id) {
         Optional<DiagnosedCase> diagnosedCase = diagnosedCaseRepository.findById(id);
@@ -62,6 +63,7 @@ public class DiagnosedCaseController {
         }
     }
 
+    // TODO: move updates logic to persistence layer
     @PatchMapping("/{id}/status/{status}")
     public ResponseEntity<DiagnosedCase> updateDiagnosedCaseStatus(@PathVariable(value = "id") long id, @PathVariable(value = "status") int status) {
         try {
