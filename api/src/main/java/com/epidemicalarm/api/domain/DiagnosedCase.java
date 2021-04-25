@@ -1,10 +1,17 @@
 package com.epidemicalarm.api.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import java.sql.Date;
 
+@Data
+@Builder
+@AllArgsConstructor
 @Entity
 public class DiagnosedCase extends DBEntity {
 
@@ -23,4 +30,6 @@ public class DiagnosedCase extends DBEntity {
     @ManyToOne
     @JoinColumn(name = "dataAdministratorId", referencedColumnName = "id")
     private DataAdministrator introducer;
+
+    public DiagnosedCase() {}
 }
