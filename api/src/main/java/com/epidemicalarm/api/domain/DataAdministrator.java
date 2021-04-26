@@ -1,5 +1,7 @@
 package com.epidemicalarm.api.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,9 +19,11 @@ import java.util.List;
 public class DataAdministrator extends DBEntity{
     private String login;
     private String password;
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "institutionId", referencedColumnName = "id")
     private Institution institution;
+    @JsonManagedReference
     @OneToMany(mappedBy = "introducer")
     private List<DiagnosedCase> diagnosedCases;
 

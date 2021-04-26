@@ -1,5 +1,6 @@
 package com.epidemicalarm.api.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,12 +22,15 @@ public class DiagnosedCase extends DBEntity {
     private int status;
     private double locationLat;
     private double locationLng;
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "identityId", referencedColumnName = "id")
     private Identity identity;
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "institutionId", referencedColumnName = "id")
     private Institution institution;
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "dataAdministratorId", referencedColumnName = "id")
     private DataAdministrator introducer;
