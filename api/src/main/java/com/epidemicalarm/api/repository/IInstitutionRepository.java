@@ -1,7 +1,6 @@
-package com.epidemicalarm.api.persistence;
+package com.epidemicalarm.api.repository;
 
 import com.epidemicalarm.api.domain.Institution;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

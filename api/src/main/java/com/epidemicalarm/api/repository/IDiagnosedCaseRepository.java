@@ -1,4 +1,4 @@
-package com.epidemicalarm.api.persistence;
+package com.epidemicalarm.api.repository;
 
 import com.epidemicalarm.api.domain.DiagnosedCase;
 import org.springframework.data.jpa.repository.JpaRepository;

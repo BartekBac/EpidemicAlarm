@@ -1,4 +1,4 @@
-package com.epidemicalarm.api.persistence;
+package com.epidemicalarm.api.repository;
 
 import com.epidemicalarm.api.domain.Identity;
 import org.springframework.data.repository.CrudRepository;

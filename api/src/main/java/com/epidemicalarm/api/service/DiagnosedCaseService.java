@@ -2,7 +2,7 @@ package com.epidemicalarm.api.service;
 
 import com.epidemicalarm.api.domain.DiagnosedCase;
 import com.epidemicalarm.api.exceptions.DiagnosedCaseNotFoundException;
-import com.epidemicalarm.api.persistence.IDiagnosedCaseRepository;
+import com.epidemicalarm.api.repository.IDiagnosedCaseRepository;
 import com.epidemicalarm.api.service.interfaces.IDiagnosedCaseService;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
