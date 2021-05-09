@@ -28,7 +28,7 @@ public class GeocoderService implements IGeocoderService {
 
     public GeocoderService() {
         this.httpClient = HttpClient.newHttpClient();
-        this.geocoderStrategy = new GeocoderHERE(); //GeocoderLocationIQ();
+        this.geocoderStrategy = new GeocoderLocationIQ();
     }
 
     private String sendRequest(Address address) throws IOException, InterruptedException {
