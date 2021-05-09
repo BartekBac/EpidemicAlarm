@@ -11,7 +11,7 @@ values (4, '12', '43-190', 'Mikołów', 'Damrota');
 insert into address (id, house_number, zip_code, city, street)
 values (5, '4', '43-190', 'Mikołów', 'Konwalii');
 insert into address (id, house_number, zip_code, city, street)
-values (6, '63', '43-170', 'Mikołów', 'Rybnicka');
+values (6, '63', '43-190', 'Mikołów', 'Rybnicka');
 insert into address (id, house_number, zip_code, city, street)
 values (7, '11', '43-180', 'Orzesze', 'Żorska');
 insert into address (id, house_number, zip_code, city, street)
