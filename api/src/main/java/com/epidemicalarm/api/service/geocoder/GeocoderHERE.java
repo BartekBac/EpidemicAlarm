@@ -1,7 +1,7 @@
 package com.epidemicalarm.api.service.geocoder;
 
 import com.epidemicalarm.api.domain.Address;
-import com.epidemicalarm.api.exceptions.GeocodingServiceException;
+import com.epidemicalarm.api.exceptions.GeocoderServiceException;
 import com.epidemicalarm.api.service.geocoder.dtos.GeocoderPosition;
 import com.epidemicalarm.api.service.geocoder.interfaces.IGeocoderStrategy;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -33,7 +33,7 @@ public class GeocoderHERE implements IGeocoderStrategy {
             JsonNode errorDescription = response.get("error_description");
             String errorMsg = "Error: " + error.asText() +", description: " + errorDescription.asText();
             log.severe(errorMsg);
-            throw new GeocodingServiceException(errorMsg);
+            throw new GeocoderServiceException(errorMsg);
         }
         log.info("Response:");
         log.info(response.toPrettyString());
@@ -53,7 +53,7 @@ public class GeocoderHERE implements IGeocoderStrategy {
         if(maxScore < this.scoreLowerLimit) {
             String errorMsg = "Query response score do not satisfy requirements: " + (maxScore * 100) + "% < " + (this.scoreLowerLimit*100) + "%.";
             log.severe(errorMsg);
-            throw new GeocodingServiceException(errorMsg);
+            throw new GeocoderServiceException(errorMsg);
         }
 
         log.info("Found position: [LAT="+position.lat+", LNG="+position.lng+"] with score "+(maxScore*100)+"%");

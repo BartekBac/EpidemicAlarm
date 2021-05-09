@@ -1,7 +1,7 @@
 package com.epidemicalarm.api.service.geocoder;
 
 import com.epidemicalarm.api.domain.Address;
-import com.epidemicalarm.api.exceptions.GeocodingServiceException;
+import com.epidemicalarm.api.exceptions.GeocoderServiceException;
 import com.epidemicalarm.api.service.geocoder.dtos.GeocoderPosition;
 import com.epidemicalarm.api.service.geocoder.interfaces.IGeocoderService;
 import com.epidemicalarm.api.service.geocoder.interfaces.IGeocoderStrategy;
@@ -47,7 +47,7 @@ public class GeocoderService implements IGeocoderService {
     }
 
     @Override
-    public GeocoderPosition geocode(Address address) throws GeocodingServiceException, IOException, InterruptedException {
+    public GeocoderPosition geocode(Address address) throws GeocoderServiceException, IOException, InterruptedException {
         ObjectMapper mapper = new ObjectMapper();
         String response = this.sendRequest(address);
         log.info("Mapping response JSON...");

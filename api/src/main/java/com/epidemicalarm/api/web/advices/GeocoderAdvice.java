@@ -1,6 +1,6 @@
 package com.epidemicalarm.api.web.advices;
 
-import com.epidemicalarm.api.exceptions.GeocodingServiceException;
+import com.epidemicalarm.api.exceptions.GeocoderServiceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -12,9 +12,9 @@ import java.io.IOException;
 @ControllerAdvice
 public class GeocoderAdvice {
     @ResponseBody
-    @ExceptionHandler(GeocodingServiceException.class)
+    @ExceptionHandler(GeocoderServiceException.class)
     @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
-    String geocodingServiceExceptionHandler(GeocodingServiceException ex) {
+    String geocodingServiceExceptionHandler(GeocoderServiceException ex) {
         return ex.getMessage();
     }
 
