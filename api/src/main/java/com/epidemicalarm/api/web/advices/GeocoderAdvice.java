@@ -1,6 +1,5 @@
 package com.epidemicalarm.api.web.advices;
 
-import com.epidemicalarm.api.exceptions.DiagnosedCaseNotFoundException;
 import com.epidemicalarm.api.exceptions.GeocodingServiceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;

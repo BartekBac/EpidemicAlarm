@@ -1,7 +1,7 @@
 package com.epidemicalarm.api.service;
 
 import com.epidemicalarm.api.domain.Identity;
-import com.epidemicalarm.api.exceptions.IdentityNotFoundException;
+import com.epidemicalarm.api.exceptions.EntityNotFoundException;
 import com.epidemicalarm.api.repository.IIdentityRepository;
 import com.epidemicalarm.api.service.interfaces.IIdentityService;
 import lombok.extern.java.Log;
@@ -27,7 +27,7 @@ public class IdentityService implements IIdentityService {
         Optional<Identity> identity = identityRepository.findById(id);
 
         if(identity.isEmpty()) {
-            throw new IdentityNotFoundException(id);
+            throw new EntityNotFoundException("Identity [ID="+id+"]");
         }
 
         return identity.get();

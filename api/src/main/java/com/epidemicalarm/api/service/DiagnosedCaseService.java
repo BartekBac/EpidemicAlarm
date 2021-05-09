@@ -1,7 +1,7 @@
 package com.epidemicalarm.api.service;
 
 import com.epidemicalarm.api.domain.DiagnosedCase;
-import com.epidemicalarm.api.exceptions.DiagnosedCaseNotFoundException;
+import com.epidemicalarm.api.exceptions.EntityNotFoundException;
 import com.epidemicalarm.api.repository.IDiagnosedCaseRepository;
 import com.epidemicalarm.api.service.interfaces.IDiagnosedCaseService;
 import lombok.extern.java.Log;
@@ -28,7 +28,7 @@ public class DiagnosedCaseService implements IDiagnosedCaseService {
         Optional<DiagnosedCase> diagnosedCase = diagnosedCaseRepository.findById(id);
 
         if(diagnosedCase.isEmpty()) {
-            throw new DiagnosedCaseNotFoundException(id);
+            throw new EntityNotFoundException("Diagnosed Case [ID="+id+"]");
         }
 
         return diagnosedCase.get();
