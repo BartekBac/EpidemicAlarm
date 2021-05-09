@@ -1,4 +1,4 @@
-package com.epidemicalarm.api.service.dtos;
+package com.epidemicalarm.api.service.geocoder.dtos;
 
 public class GeocoderPosition {
     public double lat;
