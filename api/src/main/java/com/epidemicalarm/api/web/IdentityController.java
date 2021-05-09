@@ -11,7 +11,6 @@ import java.util.List;
 /*
 * TODO:
 * Improve exception handling
-* Test rest Identity endpoint
 * Test rest diagnosed_case endpoints
 * Add remaining modules
 * */
@@ -38,15 +37,14 @@ public class IdentityController {
         return identityService.add(identity);
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteIdentity(@PathVariable(value = "id") long id) {
-        identityService.delete(id);
-    }
-
     @PutMapping("/{id}")
     public Identity updateIdentityStatus(@Validated @RequestBody Identity identity) {
         return identityService.update(identity);
     }
 
+    @DeleteMapping("/{id}")
+    public void deleteIdentity(@PathVariable(value = "id") long id) {
+        identityService.delete(id);
+    }
 
 }
