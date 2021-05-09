@@ -45,6 +45,11 @@ public class DiagnosedCaseService implements IDiagnosedCaseService {
     }
 
     @Override
+    public DiagnosedCase update(DiagnosedCase diagnosedCase) {
+        return diagnosedCaseRepository.save(diagnosedCase);
+    }
+
+    @Override
     public void delete(long id) {
         DiagnosedCase diagnosedCase = this.findById(id);
         diagnosedCaseRepository.delete(diagnosedCase);
@@ -54,8 +59,7 @@ public class DiagnosedCaseService implements IDiagnosedCaseService {
     public DiagnosedCase updateStatus(long id, int newStatus) {
         DiagnosedCase diagnosedCase = this.findById(id);
         diagnosedCase.setStatus(newStatus);
-        diagnosedCaseRepository.save(diagnosedCase);
-        return diagnosedCase;
+        return diagnosedCaseRepository.save(diagnosedCase);
     }
 
     @Override
@@ -66,8 +70,7 @@ public class DiagnosedCaseService implements IDiagnosedCaseService {
         long newExpirationTime = diagnosedCase.getDiagnosisDate().getTime() + oneDay * newDuration;
         Date newExpirationDate = new Date(newExpirationTime);
         diagnosedCase.setExpirationDate(newExpirationDate);
-        diagnosedCaseRepository.save(diagnosedCase);
-        return diagnosedCase;
+        return diagnosedCaseRepository.save(diagnosedCase);
     }
 
     @Override
@@ -75,7 +78,6 @@ public class DiagnosedCaseService implements IDiagnosedCaseService {
         DiagnosedCase diagnosedCase = this.findById(id);
         diagnosedCase.setLocationLat(newLocationLat);
         diagnosedCase.setLocationLng(newLocationLng);
-        diagnosedCaseRepository.save(diagnosedCase);
-        return diagnosedCase;
+        return diagnosedCaseRepository.save(diagnosedCase);
     }
 }

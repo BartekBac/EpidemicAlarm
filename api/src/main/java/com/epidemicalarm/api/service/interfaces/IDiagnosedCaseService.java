@@ -8,6 +8,7 @@ public interface IDiagnosedCaseService {
     DiagnosedCase findById(long id);
     List<DiagnosedCase> findAll();
     DiagnosedCase add(DiagnosedCase diagnosedCase);
+    DiagnosedCase update(DiagnosedCase diagnosedCase);
     void delete(long id);
     DiagnosedCase updateStatus(long id, int newStatus);
     DiagnosedCase updateDuration(long id, int newDuration);

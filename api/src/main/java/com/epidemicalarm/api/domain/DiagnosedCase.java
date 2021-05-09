@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -22,15 +23,15 @@ public class DiagnosedCase extends DBEntity {
     private int status;
     private double locationLat;
     private double locationLng;
-    @JsonBackReference
-    @ManyToOne
+    @JsonBackReference(value = "identity")
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "identityId", referencedColumnName = "id")
     private Identity identity;
-    @JsonBackReference
+    @JsonBackReference(value = "diagnosedCase-institution")
     @ManyToOne
     @JoinColumn(name = "institutionId", referencedColumnName = "id")
     private Institution institution;
-    @JsonBackReference
+    @JsonBackReference(value = "diagnosedCase-dataAdministrator")
     @ManyToOne
     @JoinColumn(name = "dataAdministratorId", referencedColumnName = "id")
     private DataAdministrator introducer;

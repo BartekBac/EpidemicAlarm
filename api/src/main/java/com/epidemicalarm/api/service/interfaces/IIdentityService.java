@@ -8,7 +8,6 @@ public interface IIdentityService {
     Identity findById(long id);
     List<Identity> findAll();
     Identity add(Identity identity);
-    void delete(long id);
     Identity update(Identity identity);
-
+    void delete(long id);
 }

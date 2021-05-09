@@ -1,6 +1,7 @@
 package com.epidemicalarm.api.web;
 
 import com.epidemicalarm.api.domain.DiagnosedCase;
+import com.epidemicalarm.api.domain.Identity;
 import com.epidemicalarm.api.service.interfaces.IDiagnosedCaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -29,13 +30,16 @@ public class DiagnosedCaseController {
         return diagnosedCaseService.add(diagnosedCase);
     }
 
-    // TODO: eventually move checking presence also to persistence and use only try/catch blocks in controllers
+    @PutMapping("/{id}")
+    public DiagnosedCase updateDiagnosedCase(@Validated @RequestBody DiagnosedCase diagnosedCase) {
+        return diagnosedCaseService.update(diagnosedCase);
+    }
+
     @DeleteMapping("/{id}")
     public void deleteDiagnosedCase(@PathVariable(value = "id") long id) {
         diagnosedCaseService.delete(id);
     }
 
-    // TODO: move updates logic to persistence layer
     @PatchMapping("/{id}/status/{status}")
     public DiagnosedCase updateDiagnosedCaseStatus(@PathVariable(value = "id") long id, @PathVariable(value = "status") int status) {
         return diagnosedCaseService.updateStatus(id, status);
@@ -47,7 +51,7 @@ public class DiagnosedCaseController {
     }
 
     @PatchMapping("/{id}/location/{location_lat}/{location_lng}")
-    public DiagnosedCase updateDiagnosedCase(@PathVariable(value = "id") long id, @PathVariable(value = "location_lat") double locationLat, @PathVariable(value = "location_lng") double locationLng) {
+    public DiagnosedCase updateDiagnosedCaseLocation(@PathVariable(value = "id") long id, @PathVariable(value = "location_lat") double locationLat, @PathVariable(value = "location_lng") double locationLng) {
         return diagnosedCaseService.updateLocation(id, locationLat, locationLng);
     }
 

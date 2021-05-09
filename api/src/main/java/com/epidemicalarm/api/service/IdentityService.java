@@ -44,15 +44,11 @@ public class IdentityService implements IIdentityService {
     }
 
     @Override
+    public Identity update(Identity identity) { return identityRepository.save(identity); }
+
+    @Override
     public void delete(long id) {
         Identity identity = this.findById(id);
         identityRepository.delete(identity);
     }
-
-    @Override
-    public Identity update(Identity identity) {
-        identityRepository.save(identity);
-        return identity;
-    }
-
 }

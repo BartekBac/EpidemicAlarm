@@ -19,10 +19,10 @@ public class Institution extends DBEntity{
     @OneToOne
     @JoinColumn(name = "addressId", referencedColumnName = "id")
     private Address address;
-    @JsonManagedReference
+    @JsonManagedReference(value = "dataAdministrator-institution")
     @OneToMany(mappedBy = "institution")
     private List<DataAdministrator> workers;
-    @JsonManagedReference
+    @JsonManagedReference(value = "diagnosedCase-institution")
     @OneToMany(mappedBy = "institution")
     private List<DiagnosedCase> diagnosedCases;
 

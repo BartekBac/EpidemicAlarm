@@ -33,7 +33,6 @@ public class IdentityController {
 
     @PostMapping
     public Identity saveIdentity(@Validated @RequestBody Identity identity) {
-
         return identityService.add(identity);
     }
 
