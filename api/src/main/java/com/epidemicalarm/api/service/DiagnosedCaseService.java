@@ -1,10 +1,12 @@
 package com.epidemicalarm.api.service;
 
+import com.epidemicalarm.api.domain.DataAdministrator;
 import com.epidemicalarm.api.domain.DiagnosedCase;
 import com.epidemicalarm.api.domain.Identity;
 import com.epidemicalarm.api.domain.Institution;
 import com.epidemicalarm.api.dto.DiagnosedCaseDTO;
 import com.epidemicalarm.api.exception.EntityNotFoundException;
+import com.epidemicalarm.api.repository.IDataAdministratorRepository;
 import com.epidemicalarm.api.repository.IDiagnosedCaseRepository;
 import com.epidemicalarm.api.repository.IIdentityRepository;
 import com.epidemicalarm.api.repository.IInstitutionRepository;
@@ -26,12 +28,13 @@ public class DiagnosedCaseService implements IDiagnosedCaseService {
     private final IDiagnosedCaseRepository diagnosedCaseRepository;
     private final IIdentityRepository identityRepository;
     private final IInstitutionRepository institutionRepository;
-
+    private final IDataAdministratorRepository dataAdministratorRepository;
     @Autowired
-    public DiagnosedCaseService(IDiagnosedCaseRepository diagnosedCaseRepository, IIdentityRepository identityRepository, IInstitutionRepository institutionRepository) {
+    public DiagnosedCaseService(IDiagnosedCaseRepository diagnosedCaseRepository, IIdentityRepository identityRepository, IInstitutionRepository institutionRepository, IDataAdministratorRepository dataAdministratorRepository) {
         this.diagnosedCaseRepository = diagnosedCaseRepository;
         this.identityRepository = identityRepository;
         this.institutionRepository = institutionRepository;
+        this.dataAdministratorRepository = dataAdministratorRepository;
     }
 
     private void setDiagnosedCaseFields(DiagnosedCaseDTO diagnosedCaseDTO, DiagnosedCase diagnosedCaseToUpdate) {
@@ -46,6 +49,12 @@ public class DiagnosedCaseService implements IDiagnosedCaseService {
             diagnosedCaseToUpdate.setInstitution(institution);
         } catch (NoSuchElementException | InvalidDataAccessApiUsageException e) {
             throw new EntityNotFoundException("Institution [ID="+diagnosedCaseDTO.institution+"]");
+        }
+        try {
+            DataAdministrator dataAdministrator = dataAdministratorRepository.findById(diagnosedCaseDTO.introducer).get();
+            diagnosedCaseToUpdate.setIntroducer(dataAdministrator);
+        } catch (NoSuchElementException | InvalidDataAccessApiUsageException e) {
+            throw new EntityNotFoundException("Data Administrator [ID="+diagnosedCaseDTO.introducer+"]");
         }
         diagnosedCaseToUpdate.setDiagnosisDate(diagnosedCaseDTO.diagnosisDate);
         diagnosedCaseToUpdate.setDuration(diagnosedCaseDTO.duration);
