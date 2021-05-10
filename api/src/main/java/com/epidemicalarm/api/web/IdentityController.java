@@ -1,6 +1,7 @@
 package com.epidemicalarm.api.web;
 
 import com.epidemicalarm.api.domain.Identity;
+import com.epidemicalarm.api.dto.IdentityDTO;
 import com.epidemicalarm.api.service.interfaces.IIdentityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -32,13 +33,13 @@ public class IdentityController {
     }
 
     @PostMapping
-    public Identity saveIdentity(@Validated @RequestBody Identity identity) {
+    public Identity saveIdentity(@Validated @RequestBody IdentityDTO identity) {
         return identityService.add(identity);
     }
 
     @PutMapping("/{id}")
-    public Identity updateIdentityStatus(@Validated @RequestBody Identity identity) {
-        return identityService.update(identity);
+    public Identity updateIdentityStatus(@PathVariable(value = "id") long id, @Validated @RequestBody IdentityDTO identity) {
+        return identityService.update(id, identity);
     }
 
     @DeleteMapping("/{id}")

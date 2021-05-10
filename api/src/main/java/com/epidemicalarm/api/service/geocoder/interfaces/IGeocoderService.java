@@ -1,7 +1,7 @@
 package com.epidemicalarm.api.service.geocoder.interfaces;
 
 import com.epidemicalarm.api.domain.Address;
-import com.epidemicalarm.api.exceptions.GeocoderServiceException;
+import com.epidemicalarm.api.exception.GeocoderServiceException;
 import com.epidemicalarm.api.service.geocoder.dtos.GeocoderPosition;
 
 import java.io.IOException;

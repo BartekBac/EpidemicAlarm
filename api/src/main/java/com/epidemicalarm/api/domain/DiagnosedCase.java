@@ -1,6 +1,9 @@
 package com.epidemicalarm.api.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,7 +26,9 @@ public class DiagnosedCase extends DBEntity {
     private int status;
     private double locationLat;
     private double locationLng;
-    @JsonBackReference(value = "identity")
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = DiagnosedCase.class)
+    //@JsonBackReference(value = "diagnosedCase-identity")
+    @JsonIdentityReference(alwaysAsId = true)
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "identityId", referencedColumnName = "id")
     private Identity identity;

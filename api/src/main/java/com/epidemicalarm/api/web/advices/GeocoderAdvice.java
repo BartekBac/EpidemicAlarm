@@ -1,6 +1,6 @@
 package com.epidemicalarm.api.web.advices;
 
-import com.epidemicalarm.api.exceptions.GeocoderServiceException;
+import com.epidemicalarm.api.exception.GeocoderServiceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;

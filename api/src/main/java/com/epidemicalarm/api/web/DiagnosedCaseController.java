@@ -2,6 +2,7 @@ package com.epidemicalarm.api.web;
 
 import com.epidemicalarm.api.domain.DiagnosedCase;
 import com.epidemicalarm.api.domain.Identity;
+import com.epidemicalarm.api.dto.DiagnosedCaseDTO;
 import com.epidemicalarm.api.service.interfaces.IDiagnosedCaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -26,13 +27,13 @@ public class DiagnosedCaseController {
     }
 
     @PostMapping
-    public DiagnosedCase saveDiagnosedCase(@Validated @RequestBody DiagnosedCase diagnosedCase) {
+    public DiagnosedCase saveDiagnosedCase(@Validated @RequestBody DiagnosedCaseDTO diagnosedCase) {
         return diagnosedCaseService.add(diagnosedCase);
     }
 
     @PutMapping("/{id}")
-    public DiagnosedCase updateDiagnosedCase(@Validated @RequestBody DiagnosedCase diagnosedCase) {
-        return diagnosedCaseService.update(diagnosedCase);
+    public DiagnosedCase updateDiagnosedCase(@PathVariable(value = "id") long id, @Validated @RequestBody DiagnosedCaseDTO diagnosedCase) {
+        return diagnosedCaseService.update(id, diagnosedCase);
     }
 
     @DeleteMapping("/{id}")
