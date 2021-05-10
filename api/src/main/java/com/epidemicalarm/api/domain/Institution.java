@@ -23,7 +23,7 @@ public class Institution extends DBEntity{
     @OneToMany(mappedBy = "institution")
     private List<DataAdministrator> workers;
     @JsonManagedReference(value = "diagnosedCase-institution")
-    @OneToMany(mappedBy = "institution", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "institution")
     private List<DiagnosedCase> diagnosedCases;
 
     public Institution() {}

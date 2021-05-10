@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -27,12 +28,12 @@ public class DiagnosedCaseController {
     }
 
     @PostMapping
-    public DiagnosedCase saveDiagnosedCase(@Validated @RequestBody DiagnosedCaseDTO diagnosedCase) {
+    public DiagnosedCase saveDiagnosedCase(@Validated @RequestBody DiagnosedCaseDTO diagnosedCase) throws IOException, InterruptedException {
         return diagnosedCaseService.add(diagnosedCase);
     }
 
     @PutMapping("/{id}")
-    public DiagnosedCase updateDiagnosedCase(@PathVariable(value = "id") long id, @Validated @RequestBody DiagnosedCaseDTO diagnosedCase) {
+    public DiagnosedCase updateDiagnosedCase(@PathVariable(value = "id") long id, @Validated @RequestBody DiagnosedCaseDTO diagnosedCase) throws IOException, InterruptedException {
         return diagnosedCaseService.update(id, diagnosedCase);
     }
 

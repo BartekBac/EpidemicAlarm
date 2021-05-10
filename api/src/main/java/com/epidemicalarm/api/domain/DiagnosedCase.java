@@ -31,14 +31,14 @@ public class DiagnosedCase extends DBEntity {
     @ManyToOne(cascade = CascadeType.REFRESH)
     @JoinColumn(name = "identityId", referencedColumnName = "id")
     private Identity identity;
-    //@JsonBackReference(value = "diagnosedCase-institution")
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = DiagnosedCase.class)
     @JsonIdentityReference(alwaysAsId = true)
     @ManyToOne
     @JoinColumn(name = "institutionId", referencedColumnName = "id")
     private Institution institution;
-    @JsonBackReference(value = "diagnosedCase-dataAdministrator")
-    @ManyToOne
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = DiagnosedCase.class)
+    @JsonIdentityReference(alwaysAsId = true)
+    @ManyToOne(cascade = CascadeType.REFRESH)
     @JoinColumn(name = "dataAdministratorId", referencedColumnName = "id")
     private DataAdministrator introducer;
 
