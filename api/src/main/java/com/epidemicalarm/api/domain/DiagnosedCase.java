@@ -28,7 +28,7 @@ public class DiagnosedCase extends DBEntity {
     private double locationLng;
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = DiagnosedCase.class)
     @JsonIdentityReference(alwaysAsId = true)
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.REFRESH)
     @JoinColumn(name = "identityId", referencedColumnName = "id")
     private Identity identity;
     @JsonBackReference(value = "diagnosedCase-institution")
