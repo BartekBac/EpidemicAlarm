@@ -24,7 +24,7 @@ public class GeocoderService implements IGeocoderService {
     private static final int TIMEOUT = 2000;
 
     private final HttpClient httpClient;
-    private final IGeocoderStrategy geocoderStrategy;
+    private IGeocoderStrategy geocoderStrategy;
 
     public GeocoderService() {
         this.httpClient = HttpClient.newHttpClient();
@@ -54,6 +54,11 @@ public class GeocoderService implements IGeocoderService {
         JsonNode responseJsonNode = mapper.readTree(response);
 
         return this.geocoderStrategy.decodeResponse(responseJsonNode);
+    }
+
+    @Override
+    public void setGeocoderStrategy(IGeocoderStrategy strategy) {
+        this.geocoderStrategy = strategy;
     }
 
 }
