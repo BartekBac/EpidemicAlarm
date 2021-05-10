@@ -19,11 +19,11 @@ import java.util.List;
 public class DataAdministrator extends DBEntity{
     private String login;
     private String password;
-    @JsonBackReference
+    @JsonBackReference(value = "dataAdministrator-institution")
     @ManyToOne
     @JoinColumn(name = "institutionId", referencedColumnName = "id")
     private Institution institution;
-    @JsonManagedReference
+    @JsonManagedReference(value = "diagnosedCase-dataAdministrator")
     @OneToMany(mappedBy = "introducer")
     private List<DiagnosedCase> diagnosedCases;
 

@@ -1,3 +1,11 @@
+delete from address where id < 1000;
+delete from data_administrator where id < 1000;
+delete from diagnosed_case where id < 1000;
+delete from identity where id < 1000;
+delete from institution where id < 1000;
+
+update hibernate_sequence set next_val = 1001;
+
 insert into address (id, house_number, zip_code, city, street)
 values (0, '3', '43-170', 'Łaziska Górne', 'Powstańców');
 insert into address (id, house_number, zip_code, city, street)
@@ -11,7 +19,7 @@ values (4, '12', '43-190', 'Mikołów', 'Damrota');
 insert into address (id, house_number, zip_code, city, street)
 values (5, '4', '43-190', 'Mikołów', 'Konwalii');
 insert into address (id, house_number, zip_code, city, street)
-values (6, '63', '43-170', 'Mikołów', 'Rybnicka');
+values (6, '63', '43-190', 'Mikołów', 'Rybnicka');
 insert into address (id, house_number, zip_code, city, street)
 values (7, '11', '43-180', 'Orzesze', 'Żorska');
 insert into address (id, house_number, zip_code, city, street)
@@ -79,3 +87,9 @@ values (8, 'zibi12@wp.pl', 'Zbigniew', 'Skoczek', '56031622135', '605231668', 11
 insert into diagnosed_case (id, diagnosis_date, duration, expiration_date, location_lat, location_lng, status,
                             identity_id, institution_id, data_administrator_id)
 values (8, '2021-4-26', 10, '2021-5-08', 50.11191704460362, 18.790735011176114, 0, 8, 2, 2);
+
+#ALTER TABLE address AUTO_INCREMENT=1001;
+#ALTER TABLE data_administrator AUTO_INCREMENT=1001;
+#ALTER TABLE diagnosed_case AUTO_INCREMENT=1001;
+#ALTER TABLE identity AUTO_INCREMENT=1001;
+#ALTER TABLE institution AUTO_INCREMENT=1001;
