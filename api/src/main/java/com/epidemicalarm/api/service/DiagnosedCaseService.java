@@ -2,10 +2,12 @@ package com.epidemicalarm.api.service;
 
 import com.epidemicalarm.api.domain.DiagnosedCase;
 import com.epidemicalarm.api.domain.Identity;
+import com.epidemicalarm.api.domain.Institution;
 import com.epidemicalarm.api.dto.DiagnosedCaseDTO;
 import com.epidemicalarm.api.exception.EntityNotFoundException;
 import com.epidemicalarm.api.repository.IDiagnosedCaseRepository;
 import com.epidemicalarm.api.repository.IIdentityRepository;
+import com.epidemicalarm.api.repository.IInstitutionRepository;
 import com.epidemicalarm.api.service.interfaces.IDiagnosedCaseService;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,26 +25,34 @@ public class DiagnosedCaseService implements IDiagnosedCaseService {
 
     private final IDiagnosedCaseRepository diagnosedCaseRepository;
     private final IIdentityRepository identityRepository;
+    private final IInstitutionRepository institutionRepository;
 
     @Autowired
-    public DiagnosedCaseService(IDiagnosedCaseRepository diagnosedCaseRepository, IIdentityRepository identityRepository) {
+    public DiagnosedCaseService(IDiagnosedCaseRepository diagnosedCaseRepository, IIdentityRepository identityRepository, IInstitutionRepository institutionRepository) {
         this.diagnosedCaseRepository = diagnosedCaseRepository;
         this.identityRepository = identityRepository;
+        this.institutionRepository = institutionRepository;
     }
 
     private void setDiagnosedCaseFields(DiagnosedCaseDTO diagnosedCaseDTO, DiagnosedCase diagnosedCaseToUpdate) {
         try {
             Identity identity = identityRepository.findById(diagnosedCaseDTO.identity).get();
             diagnosedCaseToUpdate.setIdentity(identity);
-            diagnosedCaseToUpdate.setDiagnosisDate(diagnosedCaseDTO.diagnosisDate);
-            diagnosedCaseToUpdate.setDuration(diagnosedCaseDTO.duration);
-            diagnosedCaseToUpdate.setStatus(diagnosedCaseDTO.status);
-            diagnosedCaseToUpdate.setExpirationDate(diagnosedCaseDTO.expirationDate);
-            diagnosedCaseToUpdate.setLocationLng(diagnosedCaseDTO.locationLng);
-            diagnosedCaseToUpdate.setLocationLat(diagnosedCaseDTO.locationLat);
         } catch (NoSuchElementException | InvalidDataAccessApiUsageException e) {
             throw new EntityNotFoundException("Identity [ID="+diagnosedCaseDTO.identity+"]");
         }
+        try {
+            Institution institution = institutionRepository.findById(diagnosedCaseDTO.institution).get();
+            diagnosedCaseToUpdate.setInstitution(institution);
+        } catch (NoSuchElementException | InvalidDataAccessApiUsageException e) {
+            throw new EntityNotFoundException("Institution [ID="+diagnosedCaseDTO.institution+"]");
+        }
+        diagnosedCaseToUpdate.setDiagnosisDate(diagnosedCaseDTO.diagnosisDate);
+        diagnosedCaseToUpdate.setDuration(diagnosedCaseDTO.duration);
+        diagnosedCaseToUpdate.setStatus(diagnosedCaseDTO.status);
+        diagnosedCaseToUpdate.setExpirationDate(diagnosedCaseDTO.expirationDate);
+        diagnosedCaseToUpdate.setLocationLng(diagnosedCaseDTO.locationLng);
+        diagnosedCaseToUpdate.setLocationLat(diagnosedCaseDTO.locationLat);
     }
 
     @Override
