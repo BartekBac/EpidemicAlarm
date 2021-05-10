@@ -1,5 +1,6 @@
 package com.epidemicalarm.api.service;
 
+import com.epidemicalarm.api.domain.DataAdministrator;
 import com.epidemicalarm.api.domain.DiagnosedCase;
 import com.epidemicalarm.api.domain.Institution;
 import com.epidemicalarm.api.dto.InstitutionDTO;
@@ -69,6 +70,14 @@ public class InstitutionService implements IInstitutionService {
             List<DiagnosedCase> diagnosedCases = institution.getDiagnosedCases();
             for(DiagnosedCase diagnosedCase : diagnosedCases) {
                 diagnosedCase.setInstitution(null);
+            }
+        } catch (Exception e) {
+            log.severe(e.getMessage());
+        }
+        try {
+            List<DataAdministrator> workers = institution.getWorkers();
+            for(DataAdministrator worker : workers) {
+                worker.setInstitution(null);
             }
         } catch (Exception e) {
             log.severe(e.getMessage());
