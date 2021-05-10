@@ -1,7 +1,7 @@
 package com.epidemicalarm.api.web;
 
 import com.epidemicalarm.api.domain.Address;
-import com.epidemicalarm.api.service.geocoder.dtos.GeocoderPosition;
+import com.epidemicalarm.api.service.geocoder.dto.GeocoderPosition;
 import com.epidemicalarm.api.service.geocoder.interfaces.IGeocoderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;

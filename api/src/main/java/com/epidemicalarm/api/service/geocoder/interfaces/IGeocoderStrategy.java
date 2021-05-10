@@ -1,7 +1,7 @@
 package com.epidemicalarm.api.service.geocoder.interfaces;
 
 import com.epidemicalarm.api.domain.Address;
-import com.epidemicalarm.api.service.geocoder.dtos.GeocoderPosition;
+import com.epidemicalarm.api.service.geocoder.dto.GeocoderPosition;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.io.UnsupportedEncodingException;

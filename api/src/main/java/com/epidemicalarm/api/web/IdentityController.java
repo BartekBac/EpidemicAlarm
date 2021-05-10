@@ -9,13 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/*
-* TODO:
-* Improve exception handling
-* Test rest diagnosed_case endpoints
-* Add remaining modules
-* */
-
 @RestController
 @RequestMapping("api/rest/identity")
 public class IdentityController {
@@ -38,7 +31,7 @@ public class IdentityController {
     }
 
     @PutMapping("/{id}")
-    public Identity updateIdentityStatus(@PathVariable(value = "id") long id, @Validated @RequestBody IdentityDTO identity) {
+    public Identity updateIdentity(@PathVariable(value = "id") long id, @Validated @RequestBody IdentityDTO identity) {
         return identityService.update(id, identity);
     }
 
