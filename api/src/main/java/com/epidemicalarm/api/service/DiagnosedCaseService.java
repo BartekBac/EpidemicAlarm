@@ -1,21 +1,23 @@
 package com.epidemicalarm.api.service;
 
-import com.epidemicalarm.api.domain.DataAdministrator;
-import com.epidemicalarm.api.domain.DiagnosedCase;
-import com.epidemicalarm.api.domain.Identity;
-import com.epidemicalarm.api.domain.Institution;
+import com.epidemicalarm.api.domain.*;
 import com.epidemicalarm.api.dto.DiagnosedCaseDTO;
 import com.epidemicalarm.api.exception.EntityNotFoundException;
+import com.epidemicalarm.api.exception.GeocoderServiceException;
 import com.epidemicalarm.api.repository.IDataAdministratorRepository;
 import com.epidemicalarm.api.repository.IDiagnosedCaseRepository;
 import com.epidemicalarm.api.repository.IIdentityRepository;
 import com.epidemicalarm.api.repository.IInstitutionRepository;
+import com.epidemicalarm.api.service.geocoder.GeocoderHERE;
+import com.epidemicalarm.api.service.geocoder.dto.GeocoderPosition;
+import com.epidemicalarm.api.service.geocoder.interfaces.IGeocoderService;
 import com.epidemicalarm.api.service.interfaces.IDiagnosedCaseService;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.sql.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -29,29 +31,42 @@ public class DiagnosedCaseService implements IDiagnosedCaseService {
     private final IIdentityRepository identityRepository;
     private final IInstitutionRepository institutionRepository;
     private final IDataAdministratorRepository dataAdministratorRepository;
+    private final IGeocoderService geocoderService;
     @Autowired
-    public DiagnosedCaseService(IDiagnosedCaseRepository diagnosedCaseRepository, IIdentityRepository identityRepository, IInstitutionRepository institutionRepository, IDataAdministratorRepository dataAdministratorRepository) {
+    public DiagnosedCaseService(IDiagnosedCaseRepository diagnosedCaseRepository, IIdentityRepository identityRepository, IInstitutionRepository institutionRepository, IDataAdministratorRepository dataAdministratorRepository, IGeocoderService geocoderService) {
         this.diagnosedCaseRepository = diagnosedCaseRepository;
         this.identityRepository = identityRepository;
         this.institutionRepository = institutionRepository;
         this.dataAdministratorRepository = dataAdministratorRepository;
+        this.geocoderService = geocoderService;
     }
 
-    private void setDiagnosedCaseFields(DiagnosedCaseDTO diagnosedCaseDTO, DiagnosedCase diagnosedCaseToUpdate) {
+    private void setLocation(DiagnosedCase diagnosedCase, Address identityAddress) throws IOException, InterruptedException, GeocoderServiceException {
+        GeocoderPosition location = this.geocoderService.geocode(identityAddress);
+        diagnosedCase.setLocationLat(location.lat);
+        diagnosedCase.setLocationLng(location.lng);
+    }
+
+    private void setDiagnosedCaseFields(DiagnosedCaseDTO diagnosedCaseDTO, DiagnosedCase diagnosedCaseToUpdate) throws IOException, InterruptedException {
+        Identity identity;
+        Institution institution;
+        DataAdministrator dataAdministrator;
+        Address identityAddress;
         try {
-            Identity identity = identityRepository.findById(diagnosedCaseDTO.identity).get();
+            identity = identityRepository.findById(diagnosedCaseDTO.identity).get();
+            identityAddress = identity.getAddress();
             diagnosedCaseToUpdate.setIdentity(identity);
         } catch (NoSuchElementException | InvalidDataAccessApiUsageException e) {
             throw new EntityNotFoundException("Identity [ID="+diagnosedCaseDTO.identity+"]");
         }
         try {
-            Institution institution = institutionRepository.findById(diagnosedCaseDTO.institution).get();
+            institution = institutionRepository.findById(diagnosedCaseDTO.institution).get();
             diagnosedCaseToUpdate.setInstitution(institution);
         } catch (NoSuchElementException | InvalidDataAccessApiUsageException e) {
             throw new EntityNotFoundException("Institution [ID="+diagnosedCaseDTO.institution+"]");
         }
         try {
-            DataAdministrator dataAdministrator = dataAdministratorRepository.findById(diagnosedCaseDTO.introducer).get();
+            dataAdministrator = dataAdministratorRepository.findById(diagnosedCaseDTO.introducer).get();
             diagnosedCaseToUpdate.setIntroducer(dataAdministrator);
         } catch (NoSuchElementException | InvalidDataAccessApiUsageException e) {
             throw new EntityNotFoundException("Data Administrator [ID="+diagnosedCaseDTO.introducer+"]");
@@ -60,8 +75,24 @@ public class DiagnosedCaseService implements IDiagnosedCaseService {
         diagnosedCaseToUpdate.setDuration(diagnosedCaseDTO.duration);
         diagnosedCaseToUpdate.setStatus(diagnosedCaseDTO.status);
         diagnosedCaseToUpdate.setExpirationDate(diagnosedCaseDTO.expirationDate);
-        diagnosedCaseToUpdate.setLocationLng(diagnosedCaseDTO.locationLng);
-        diagnosedCaseToUpdate.setLocationLat(diagnosedCaseDTO.locationLat);
+        if(diagnosedCaseDTO.locationLat == null || diagnosedCaseDTO.locationLng == null) {
+            try {
+                this.setLocation(diagnosedCaseToUpdate, identityAddress);
+            } catch (Exception e){
+                log.severe("Internal error: " + e.toString());
+                log.warning("Cannot resolve location with default strategy, switching to HERE geolocation service...");
+                try {
+                    this.geocoderService.setGeocoderStrategy(new GeocoderHERE());
+                    this.setLocation(diagnosedCaseToUpdate,identityAddress);
+                } catch (Exception exception) {
+                    log.severe("Cannot resolve location with HERE strategy");
+                    throw exception;
+                }
+            }
+        } else {
+            diagnosedCaseToUpdate.setLocationLng(diagnosedCaseDTO.locationLng);
+            diagnosedCaseToUpdate.setLocationLat(diagnosedCaseDTO.locationLat);
+        }
     }
 
     @Override
@@ -80,14 +111,14 @@ public class DiagnosedCaseService implements IDiagnosedCaseService {
     }
 
     @Override
-    public DiagnosedCase add(DiagnosedCaseDTO diagnosedCase) {
+    public DiagnosedCase add(DiagnosedCaseDTO diagnosedCase) throws IOException, InterruptedException {
         DiagnosedCase newDiagnosedCase = new DiagnosedCase();
         this.setDiagnosedCaseFields(diagnosedCase, newDiagnosedCase);
         return diagnosedCaseRepository.save(newDiagnosedCase);
     }
 
     @Override
-    public DiagnosedCase update(long id, DiagnosedCaseDTO diagnosedCase) {
+    public DiagnosedCase update(long id, DiagnosedCaseDTO diagnosedCase) throws IOException, InterruptedException {
         DiagnosedCase diagnosedCaseToUpdate = this.findById(id);
         this.setDiagnosedCaseFields(diagnosedCase, diagnosedCaseToUpdate);
         return diagnosedCaseRepository.save(diagnosedCaseToUpdate);

@@ -8,4 +8,5 @@ import java.io.IOException;
 
 public interface IGeocoderService {
     GeocoderPosition geocode(Address address) throws GeocoderServiceException, IOException, InterruptedException;
+    void setGeocoderStrategy(IGeocoderStrategy strategy);
 }

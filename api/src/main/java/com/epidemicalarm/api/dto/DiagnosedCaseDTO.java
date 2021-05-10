@@ -7,8 +7,8 @@ public class DiagnosedCaseDTO {
     public int duration; // in days
     public Date expirationDate;
     public int status;
-    public double locationLat;
-    public double locationLng;
+    public Double locationLat;
+    public Double locationLng;
     public Long identity;
     public Long institution;
     public Long introducer;
