@@ -8,7 +8,8 @@ import com.epidemicalarm.api.repository.IDataAdministratorRepository;
 import com.epidemicalarm.api.repository.IDiagnosedCaseRepository;
 import com.epidemicalarm.api.repository.IIdentityRepository;
 import com.epidemicalarm.api.repository.IInstitutionRepository;
-import com.epidemicalarm.api.service.geocoder.GeocoderHERE;
+import com.epidemicalarm.api.service.geocoder.GeocoderArcGIS;
+import com.epidemicalarm.api.service.geocoder.GeocoderOpenCage;
 import com.epidemicalarm.api.service.geocoder.dto.GeocoderPosition;
 import com.epidemicalarm.api.service.geocoder.interfaces.IGeocoderService;
 import com.epidemicalarm.api.service.interfaces.IDiagnosedCaseService;
@@ -82,7 +83,7 @@ public class DiagnosedCaseService implements IDiagnosedCaseService {
                 log.severe("Internal error: " + e.toString());
                 log.warning("Cannot resolve location with default strategy, switching to HERE geolocation service...");
                 try {
-                    this.geocoderService.setGeocoderStrategy(new GeocoderHERE());
+                    this.geocoderService.setGeocoderStrategy(new GeocoderOpenCage());
                     this.setLocation(diagnosedCaseToUpdate,identityAddress);
                 } catch (Exception exception) {
                     log.severe("Cannot resolve location with HERE strategy");
