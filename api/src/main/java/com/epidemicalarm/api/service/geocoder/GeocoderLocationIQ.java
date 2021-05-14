@@ -9,6 +9,7 @@ import lombok.extern.java.Log;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Locale;
 
 @Log
 public class GeocoderLocationIQ implements IGeocoderStrategy {
@@ -59,11 +60,11 @@ public class GeocoderLocationIQ implements IGeocoderStrategy {
                     }
 
                     JsonNode region = item.at("/address/state");
-                    if(region != null) position.region = region.asText();
+                    if(region != null) position.region = region.asText().replace("województwo ", "").toLowerCase(Locale.ROOT);
 
                     JsonNode subregion = item.at("/address/county");
                     if(subregion != null) {
-                        position.subregion = subregion.asText();
+                        position.subregion = subregion.asText().replace("powiat ", "").toLowerCase(Locale.ROOT);
                     }
                 }
             }

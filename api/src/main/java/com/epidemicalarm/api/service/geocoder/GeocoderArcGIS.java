@@ -9,6 +9,7 @@ import lombok.extern.java.Log;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Locale;
 
 @Log
 public class GeocoderArcGIS implements IGeocoderStrategy {
@@ -41,8 +42,8 @@ public class GeocoderArcGIS implements IGeocoderStrategy {
                 position.lat = item.at("/location/y").asDouble();
                 position.lng = item.at("/location/x").asDouble();
                 position.city = item.at("/attributes/City").asText();
-                position.subregion = item.at("/attributes/Subregion").asText();
-                position.region = item.at("/attributes/Region").asText();
+                position.subregion = item.at("/attributes/Subregion").asText().replace("Powiat ", "").toLowerCase(Locale.ROOT);
+                position.region = item.at("/attributes/Region").asText().replace("Woj. ", "").toLowerCase(Locale.ROOT);
             }
         }
 
