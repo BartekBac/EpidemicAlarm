@@ -64,8 +64,7 @@ public class GeocoderOpenCage implements IGeocoderStrategy {
                 if(subregion != null && !subregion.asText().isEmpty()) {
                     position.subregion = subregion.asText().replace("powiat ", "").toLowerCase(Locale.ROOT);
                 } else {
-                    subregion = item.at("/components/city_district");
-                    if(subregion != null) position.subregion = subregion.asText();
+                    position.subregion = position.city;
                 }
 
             }
