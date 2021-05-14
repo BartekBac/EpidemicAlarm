@@ -47,6 +47,26 @@ public class GeocoderOpenCage implements IGeocoderStrategy {
                 maxScore = score;
                 position.lat = item.at("/geometry/lat").asDouble();
                 position.lng = item.at("/geometry/lng").asDouble();
+
+                JsonNode city = item.at("/components/city");
+                if(city != null && !city.asText().isEmpty()) {
+                    position.city = city.asText();
+                } else {
+                    city = item.at("/components/town");
+                    if(city != null) position.city = city.asText();
+                }
+
+                JsonNode region = item.at("/components/state");
+                if(region != null) position.region = region.asText();
+
+                JsonNode subregion = item.at("/components/county");
+                if(subregion != null && !subregion.asText().isEmpty()) {
+                    position.subregion = subregion.asText();
+                } else {
+                    subregion = item.at("/components/city_district");
+                    if(subregion != null) position.subregion = subregion.asText();
+                }
+
             }
         }
 

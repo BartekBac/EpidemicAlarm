@@ -83,7 +83,7 @@ public class DiagnosedCaseService implements IDiagnosedCaseService {
                 log.severe("Internal error: " + e.toString());
                 log.warning("Cannot resolve location with default strategy, switching to HERE geolocation service...");
                 try {
-                    this.geocoderService.setGeocoderStrategy(new GeocoderOpenCage());
+                    this.geocoderService.setGeocoderStrategy(new GeocoderArcGIS());
                     this.setLocation(diagnosedCaseToUpdate,identityAddress);
                 } catch (Exception exception) {
                     log.severe("Cannot resolve location with HERE strategy");

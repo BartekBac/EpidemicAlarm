@@ -14,7 +14,7 @@ import java.net.URLEncoder;
 public class GeocoderHERE implements IGeocoderStrategy {
 
     private static final String GEOCODING_RESOURCE = "https://geocode.search.hereapi.com/v1/geocode";
-    private static final String API_KEY = "4esdNSjXGycc6lSeffnX73RW1yf71Zaif_IAfxlBEK4";
+    private static final String API_KEY = "V1CVGerHDhNNx9Oy3Wwtk_YvrNlZ7WDu6LY_BdMVUGQ";
 
     private final double scoreLowerLimit = 0.5;
     
@@ -47,6 +47,9 @@ public class GeocoderHERE implements IGeocoderStrategy {
                 maxScore = score;
                 position.lat = item.at("/position/lat").asDouble();
                 position.lng = item.at("/position/lng").asDouble();
+                position.city = item.at("/address/city").asText();
+                position.subregion = item.at("/address/county").asText();
+                position.region = item.at("/address/state").asText();
             }
         }
 

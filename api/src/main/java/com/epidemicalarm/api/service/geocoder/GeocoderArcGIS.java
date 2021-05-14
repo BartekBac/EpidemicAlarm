@@ -22,7 +22,7 @@ public class GeocoderArcGIS implements IGeocoderStrategy {
     public String prepareRequest(Address address) throws UnsupportedEncodingException {
         String query = address.getStreet() + " " + address.getHouseNumber() + ", " + address.getCity() + " " + address.getZipCode();
         String encodedQuery = URLEncoder.encode(query,"UTF-8");
-        String requestUri = GEOCODING_RESOURCE + "?address=" + encodedQuery + "&maxLocations=3&f=json&token=" + API_KEY;
+        String requestUri = GEOCODING_RESOURCE + "?address=" + encodedQuery + "&maxLocations=3&outFields=location,score,City,Subregion,Region&f=json&token=" + API_KEY;
         return requestUri;
     }
 
@@ -40,6 +40,9 @@ public class GeocoderArcGIS implements IGeocoderStrategy {
                 maxScore = score;
                 position.lat = item.at("/location/y").asDouble();
                 position.lng = item.at("/location/x").asDouble();
+                position.city = item.at("/attributes/City").asText();
+                position.subregion = item.at("/attributes/Subregion").asText();
+                position.region = item.at("/attributes/Region").asText();
             }
         }
 
