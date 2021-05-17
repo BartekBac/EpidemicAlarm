@@ -9,6 +9,7 @@ import lombok.extern.java.Log;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Locale;
 
 @Log
 public class GeocoderLocationIQ implements IGeocoderStrategy {
@@ -23,7 +24,7 @@ public class GeocoderLocationIQ implements IGeocoderStrategy {
         String encodedStreet = URLEncoder.encode(address.getStreet()+" "+address.getHouseNumber(),"UTF-8");
         String encodedCity = URLEncoder.encode(address.getCity(),"UTF-8");
         String encodedZipCode = URLEncoder.encode(address.getZipCode(),"UTF-8");
-        String requestUri = GEOCODING_RESOURCE + "?key=" + API_KEY + "&street=" + encodedStreet + "&city=" + encodedCity + "&county=" + encodedCity + "&country=Poland&postalcode=" + encodedZipCode + "&format=json";
+        String requestUri = GEOCODING_RESOURCE + "?key=" + API_KEY + "&street=" + encodedStreet + "&city=" + encodedCity + "&county=" + encodedCity + "&country=Poland&postalcode=" + encodedZipCode + "&format=json&addressdetails=1&accept-language=pl";
         return requestUri;
     }
 
@@ -49,6 +50,22 @@ public class GeocoderLocationIQ implements IGeocoderStrategy {
                     maxScore = score;
                     position.lat = item.get("lat").asDouble();
                     position.lng = item.get("lon").asDouble();
+
+                    JsonNode city = item.at("/address/city");
+                    if(city != null && !city.asText().isEmpty()) {
+                        position.city = city.asText();
+                    } else {
+                        city = item.at("/address/town");
+                        if(city != null) position.city = city.asText();
+                    }
+
+                    JsonNode region = item.at("/address/state");
+                    if(region != null) position.region = region.asText().replace("województwo ", "").toLowerCase(Locale.ROOT);
+
+                    JsonNode subregion = item.at("/address/county");
+                    if(subregion != null) {
+                        position.subregion = subregion.asText().replace("powiat ", "").toLowerCase(Locale.ROOT);
+                    }
                 }
             }
         } else {
