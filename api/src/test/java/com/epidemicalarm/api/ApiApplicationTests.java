@@ -22,18 +22,4 @@ class ApiApplicationTests {
 	void contextLoads() {
 	}
 
-	@Test
-	void updateDiagnosedCase() {
-		// given
-		DiagnosedCase diagnosedCase;
-		Identity identity;
-		long expectedIdentityId = 1L;
-
-		// when
-		diagnosedCase = diagnosedCaseRepository.findById(0L).get();
-
-		// then
-		Assert.isInstanceOf(DiagnosedCase.class, diagnosedCase);
-	}
-
 }
