@@ -15,7 +15,7 @@ import java.util.Locale;
 public class GeocoderHERE implements IGeocoderStrategy {
 
     private static final String GEOCODING_RESOURCE = "https://geocode.search.hereapi.com/v1/geocode";
-    private static final String API_KEY = "V1CVGerHDhNNx9Oy3Wwtk_YvrNlZ7WDu6LY_BdMVUGQ";
+    private static final String API_KEY = "p0QCvCvkulw_h0nOWc1XAU7j81GqNY0aPIyReeFfOYs";
 
     private final double scoreLowerLimit = 0.5;
     
