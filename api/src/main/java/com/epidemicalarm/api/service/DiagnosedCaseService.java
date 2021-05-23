@@ -4,17 +4,19 @@ import com.epidemicalarm.api.domain.*;
 import com.epidemicalarm.api.dto.DiagnosedCaseDTO;
 import com.epidemicalarm.api.exception.EntityNotFoundException;
 import com.epidemicalarm.api.exception.GeocoderServiceException;
+import com.epidemicalarm.api.exception.InvalidRequestParameterException;
 import com.epidemicalarm.api.repository.IDataAdministratorRepository;
 import com.epidemicalarm.api.repository.IDiagnosedCaseRepository;
 import com.epidemicalarm.api.repository.IIdentityRepository;
 import com.epidemicalarm.api.repository.IInstitutionRepository;
+import com.epidemicalarm.api.service.distance.interfaces.IDistanceService;
 import com.epidemicalarm.api.service.geocoder.GeocoderArcGIS;
-import com.epidemicalarm.api.service.geocoder.GeocoderOpenCage;
 import com.epidemicalarm.api.service.geocoder.dto.GeocoderPosition;
 import com.epidemicalarm.api.service.geocoder.interfaces.IGeocoderService;
 import com.epidemicalarm.api.service.interfaces.IDiagnosedCaseService;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.CollectionUtils;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 
@@ -33,13 +35,16 @@ public class DiagnosedCaseService implements IDiagnosedCaseService {
     private final IInstitutionRepository institutionRepository;
     private final IDataAdministratorRepository dataAdministratorRepository;
     private final IGeocoderService geocoderService;
+    private final IDistanceService distanceService;
+
     @Autowired
-    public DiagnosedCaseService(IDiagnosedCaseRepository diagnosedCaseRepository, IIdentityRepository identityRepository, IInstitutionRepository institutionRepository, IDataAdministratorRepository dataAdministratorRepository, IGeocoderService geocoderService) {
+    public DiagnosedCaseService(IDiagnosedCaseRepository diagnosedCaseRepository, IIdentityRepository identityRepository, IInstitutionRepository institutionRepository, IDataAdministratorRepository dataAdministratorRepository, IGeocoderService geocoderService, IDistanceService distanceService) {
         this.diagnosedCaseRepository = diagnosedCaseRepository;
         this.identityRepository = identityRepository;
         this.institutionRepository = institutionRepository;
         this.dataAdministratorRepository = dataAdministratorRepository;
         this.geocoderService = geocoderService;
+        this.distanceService = distanceService;
     }
 
     private void setLocation(DiagnosedCase diagnosedCase, Address identityAddress) throws IOException, InterruptedException, GeocoderServiceException {
@@ -107,8 +112,44 @@ public class DiagnosedCaseService implements IDiagnosedCaseService {
     }
 
     @Override
-    public List<DiagnosedCase> findAll() {
-        return diagnosedCaseRepository.findAll();
+    public List<DiagnosedCase> findByParameters(Double lat, Double lng, Double range) {
+        List<DiagnosedCase> diagnosedCases = diagnosedCaseRepository.findAll();
+
+        if(lat == null && lng == null && range == null) {
+            return diagnosedCases;
+        }
+
+        if(lat == null) {
+            throw new InvalidRequestParameterException("LAT", "NULL", "Latitude cannot be null");
+        }
+
+        if(lng == null) {
+            throw new InvalidRequestParameterException("LNG", "NULL", "Longitude cannot be null");
+        }
+
+        if(range == null) {
+            throw new InvalidRequestParameterException("RANGE", "NULL", "Range cannot be null");
+        }
+
+        if(range <= 0) {
+            throw new InvalidRequestParameterException("RANGE", range.toString(), "Range cannot be <= 0");
+        }
+
+        if(lat < -90 || lat > 90 ) {
+            throw new InvalidRequestParameterException("LAT", lat.toString(), "Latitude must be in range <-90:90>");
+        }
+
+        if(lat < -180 || lat > 180 ) {
+            throw new InvalidRequestParameterException("LNG", lng.toString(), "Longitude must be in range <-180:180>");
+        }
+
+        CollectionUtils.filter(diagnosedCases, dc -> {
+             DiagnosedCase diagnosedCase = ((DiagnosedCase) dc);
+             double distance = distanceService.calculate(lat, lng, diagnosedCase.getLocationLat(), diagnosedCase.getLocationLng());
+             return distance <= range;
+        });
+
+        return diagnosedCases;
     }
 
     @Override
