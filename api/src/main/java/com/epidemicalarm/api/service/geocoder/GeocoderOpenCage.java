@@ -15,7 +15,7 @@ import java.util.Locale;
 public class GeocoderOpenCage implements IGeocoderStrategy {
 
     private static final String GEOCODING_RESOURCE = "https://api.opencagedata.com/geocode/v1/json";
-    private static final String API_KEY = "a7dcdd1891744e9c9344468cad076577";
+    private static final String API_KEY = "7e9a4820669d4967993c48492e0c2d23";
 
     private final double scoreLowerLimit = 5.0;
     
@@ -64,7 +64,7 @@ public class GeocoderOpenCage implements IGeocoderStrategy {
                 if(subregion != null && !subregion.asText().isEmpty()) {
                     position.subregion = subregion.asText().replace("powiat ", "").toLowerCase(Locale.ROOT);
                 } else {
-                    position.subregion = position.city;
+                    position.subregion = position.city.toLowerCase(Locale.ROOT);
                 }
 
             }
