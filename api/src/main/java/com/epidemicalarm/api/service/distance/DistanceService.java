@@ -2,7 +2,9 @@ package com.epidemicalarm.api.service.distance;
 
 import com.epidemicalarm.api.service.distance.interfaces.IDistanceCalculationStrategy;
 import com.epidemicalarm.api.service.distance.interfaces.IDistanceService;
+import org.springframework.stereotype.Service;
 
+@Service
 public class DistanceService implements IDistanceService {
 
     IDistanceCalculationStrategy distanceCalculationStrategy;
