@@ -21,4 +21,9 @@ public class DistanceService implements IDistanceService {
     public double calculate(double fromLat, double fromLng, double toLat, double toLng) {
         return distanceCalculationStrategy.compute(fromLat, fromLng, toLat, toLng);
     }
+
+    @Override
+    public void setCalculatingStrategy(IDistanceCalculationStrategy distanceCalculationStrategy) {
+        this.distanceCalculationStrategy = distanceCalculationStrategy;
+    }
 }
