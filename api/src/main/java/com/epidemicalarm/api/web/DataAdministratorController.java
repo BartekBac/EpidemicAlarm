@@ -16,7 +16,7 @@ public class DataAdministratorController {
     private IDataAdministratorService dataAdministratorService;
 
     @GetMapping
-    public List<DataAdministrator> findAllIdentities() {
+    public List<DataAdministrator> findAllDataAdministrators() {
         return dataAdministratorService.findAll();
     }
 
