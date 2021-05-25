@@ -16,7 +16,7 @@ public class InstitutionController {
     private IInstitutionService institutionService;
 
     @GetMapping
-    public List<Institution> findAllIdentities() {
+    public List<Institution> findAllInstitutions() {
         return institutionService.findAll();
     }
 
