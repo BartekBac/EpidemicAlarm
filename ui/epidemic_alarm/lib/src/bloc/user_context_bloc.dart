@@ -5,8 +5,8 @@ enum UserEvent {
   zoomIn,
   zoomOut,
   zoomTo,
-  setPosition,
-  centerPosition,
+  positionTo,
+  positionCenter,
   rangeIncrease,
   rangeDecrease,
   rangeTo
@@ -101,9 +101,36 @@ class UserContextBloc extends Bloc<UserEvent, UserContext> {
   }
 
   @override
-  Stream<UserContext> mapEventToState(UserEvent event) {
-    // TODO: implement mapEventToState
-    throw UnimplementedError();
+  Stream<UserContext> mapEventToState(UserEvent event) async* {
+    switch(event) {
+      case UserEvent.positionCenter:
+        // TODO: use geolocation service
+        _setPosition(Constants.defaultPosition.latitude, Constants.defaultPosition.longitude);
+        break;
+      case UserEvent.positionTo:
+        // TODO: use passed value
+        _setPosition(Constants.defaultPosition.latitude, Constants.defaultPosition.longitude);
+        break;
+      case UserEvent.rangeDecrease:
+        _setRange(state.rangeIndex - 1);
+        break;
+      case UserEvent.rangeIncrease:
+        _setRange(state.rangeIndex + 1);
+        break;
+      case UserEvent.rangeTo:
+        // TODO: use passed value
+        break;
+      case UserEvent.zoomIn:
+        _setZoom(state.zoom - 1);
+        break;
+      case UserEvent.zoomOut:
+        _setZoom(state.zoom +1);
+        break;
+      case UserEvent.zoomTo:
+        // TODO: use passed value or service
+        break;
+    }
+    yield state;
   }
 
 }

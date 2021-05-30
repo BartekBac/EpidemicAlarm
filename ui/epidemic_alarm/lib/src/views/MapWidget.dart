@@ -81,9 +81,24 @@ class _MapWidgetState extends State<MapWidget> {
                 PolylineLayerOptions(polylines: statefulMapController.lines),
                 PolygonLayerOptions(polygons: statefulMapController.polygons),
                 CircleLayerOptions(circles: circleMarkers)
-              ],
+              ]
             ),
-            // ...
+            FloatingActionButton(
+              child: Icon(Icons.remove),
+              onPressed: () {
+                setState(() {
+                circleMarkers.add(
+                  CircleMarker(
+                      point: LatLng(37.4219983, -122.084),
+                      color: Colors.blue.withOpacity(0.7),
+                      borderStrokeWidth: 2,
+                      useRadiusInMeter: true,
+                      radius: 4000 // 2000 meters | 2 km
+                  ),
+                );
+              });
+              },
+            ),
           ])),
     );
   }
