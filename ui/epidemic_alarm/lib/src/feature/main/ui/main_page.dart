@@ -10,12 +10,19 @@ class MainTabView extends StatefulWidget {
 
 class _MainTabViewState extends State<MainTabView> {
 
+  String _appBarTitle = "Epidemic Alarm";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text(_appBarTitle),
+        centerTitle: true,
+      ),
       body: Center(
         child: MapWidget(),
       )
     );
   }
 }
+
