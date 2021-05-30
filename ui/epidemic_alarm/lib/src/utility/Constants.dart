@@ -13,5 +13,8 @@ class Constants {
       speedAccuracy: 0.0
   );
 
+  static List<double> rangeSteps = [10.0, 25.0, 50.0, 100.0, 250.0, 500.0, 1000.0];
+
+
 
 }
