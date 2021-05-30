@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:epidemic_alarm/src/logic/GeolocationService.dart';
-import 'package:epidemic_alarm/src/utility/Constants.dart';
+import 'package:epidemic_alarm/src/utility/configuration.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
@@ -20,7 +20,7 @@ class _MapWidgetState extends State<MapWidget> {
   StatefulMapController statefulMapController;
   StreamSubscription<StatefulMapControllerStateChange> sub;
 
-  Position _position = Constants.defaultPosition;
+  Position _position = Constants.DEFAULT_POSITION;
   double _zoom = 11.0;
 
   var circleMarkers = <CircleMarker>[
