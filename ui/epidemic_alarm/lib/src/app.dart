@@ -1,4 +1,4 @@
-import 'package:epidemic_alarm/src/views/MainTabView.dart';
+import 'package:epidemic_alarm/src/feature/main/ui/main_page.dart';
 import 'package:flutter/material.dart';
 
 class App extends StatelessWidget {
@@ -10,12 +10,9 @@ class App extends StatelessWidget {
     return MaterialApp(
       title: _title,
       theme: ThemeData.light(),
-      home: Scaffold(
-          appBar: AppBar(
-            title: const Text(_title),
-            centerTitle: true,
-          ),
-          body: MainTabView()),
+      routes: <String, WidgetBuilder>{
+        '/': (context) => MainPage()
+      },
     );
   }
 }
