@@ -1,6 +1,7 @@
 import 'package:epidemic_alarm/src/feature/map/zone/model/zone_model.dart';
 import 'package:epidemic_alarm/src/feature/map/zone/controller/zone_marker_controller.dart';
 import 'package:epidemic_alarm/src/feature/map/zone/ui/zone_menu_widget.dart';
+import 'package:epidemic_alarm/src/utility/configuration.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
@@ -18,9 +19,26 @@ class _ZoneMapWidgetState extends State<ZoneMapWidget> {
   MapController mapController;
   ZoneMarkerController zoneMarkerController;
 
-  void updatePositionAndMarker() {
-    mapController.move(LatLng(zone.lat, zone.lng), mapController.zoom);
-    zoneMarkerController.updateCircleMarker(zone.lat, zone.lng, 4000);
+  void centerPositionAndMarker() {
+    mapController.moveAndRotate(LatLng(zone.lat, zone.lng), mapController.zoom, 0.0);
+    updatePositionMarker();
+  }
+
+  void updatePositionMarker() {
+    zoneMarkerController.updateCircleMarker(zone.lat, zone.lng, zone.range);
+  }
+
+  void updateCursorRange() {
+    zoneMarkerController.updateCursorMarker(mapController.center.latitude, mapController.center.longitude, zone.range);
+  }
+
+  void updatePosition() {
+    zone.positionTo(mapController.center);
+    updatePositionMarker();
+  }
+
+  void updateZoom() {
+    mapController.move(mapController.center, zone.zoom);
   }
 
   @override
@@ -49,17 +67,24 @@ class _ZoneMapWidgetState extends State<ZoneMapWidget> {
                 mapController: mapController,
                 options: MapOptions(
                     center: LatLng(zone.lat, zone.lng),
-                    zoom: zone.zoom),
+                    zoom: zone.zoom,
+                    minZoom: Constants.MIN_ZOOM,
+                    maxZoom: Constants.MAX_ZOOM,
+                    onPositionChanged: (position, flag) => zoneMarkerController.updateCursorMarker(position.center.latitude, position.center.longitude, zone.range)
+                ),
                 layers: [
                   TileLayerOptions(
                       urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
                       subdomains: ['a', 'b', 'c']
                   ),
                   CircleLayerOptions(circles: zoneMarkerController.circleMarkers)
-                ]
+                ],
             ),
             ZoneMenuWidget(
-              onCenterButtonClick: () => updatePositionAndMarker()
+              onCenterButtonClick: () => centerPositionAndMarker(),
+              onRangeDropdownChange: () => updateCursorRange(),
+              onZoomChange: () => updateZoom(),
+              onSearchButtonClick: () => updatePosition(),
             )
         ])
       ),

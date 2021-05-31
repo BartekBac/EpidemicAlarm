@@ -1,24 +1,25 @@
 import 'package:epidemic_alarm/src/logic/GeolocationService.dart';
 import 'package:epidemic_alarm/src/utility/configuration.dart';
 import 'package:flutter/material.dart';
+import 'package:latlong/latlong.dart';
 
 class ZoneModel extends ChangeNotifier {
   static final List<double> rangeSteps = [10.0, 25.0, 50.0, 100.0, 250.0, 500.0, 1000.0];
 
   double _zoom;
-  int _rangeIndex;
+  double _range;
   double _lat;
   double _lng;
 
   ZoneModel() {
-    _zoom = 11.0;
-    _rangeIndex = 3;
+    _zoom = Constants.DEFAULT_ZOOM;
+    _range = rangeSteps[3];
     _lat = Constants.DEFAULT_POSITION.latitude;
     _lng = Constants.DEFAULT_POSITION.longitude;
   }
 
   double get zoom => _zoom;
-  int get rangeIndex => _rangeIndex;
+  double get range => _range;
   double get lat => _lat;
   double get lng => _lng;
 
@@ -36,18 +37,18 @@ class ZoneModel extends ChangeNotifier {
     _zoom = value;
   }
 
-  void _setRangeIndex(int value) {
-    if(value >= rangeSteps.length) {
-      _rangeIndex = rangeSteps.length - 1;
+  void _setRange(double value) {
+    if(value >= Constants.MAX_RANGE) {
+      _range = Constants.MAX_RANGE;
       return;
     }
 
-    if(value <= 0) {
-      _rangeIndex = 0;
+    if(value <= Constants.MIN_RANGE) {
+      _range = Constants.MIN_RANGE;
       return;
     }
 
-    _rangeIndex = value;
+    _range = value;
   }
 
   void _setLat(double value) {
@@ -93,24 +94,22 @@ class ZoneModel extends ChangeNotifier {
         });
   }
 
-  void positionTo(double latitude, double longitude) {
-    _setLat(latitude);
-    _setLng(longitude);
+  void positionTo(LatLng position) {
+    _setLat(position.latitude);
+    _setLng(position.longitude);
+    print("Position set to ${_lat}, ${_lng}");
     notifyListeners();
   }
 
-  void zoomIn() {
-    _setZoom(_zoom - 1);
+  void zoomTo(double value) {
+    _setZoom(value);
+    print("Zoom set to: ${_zoom}");
     notifyListeners();
   }
 
-  void zoomOut() {
-    _setZoom(_zoom + 1);
-    notifyListeners();
-  }
-
-  void rangeTo(int value) {
-    _setRangeIndex(value);
+  void rangeTo(double value) {
+    _setRange(value);
+    print("Range set to:${_range}");
     notifyListeners();
   }
 
