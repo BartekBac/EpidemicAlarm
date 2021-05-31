@@ -1,4 +1,4 @@
-import 'package:epidemic_alarm/src/feature/map/zone/ui/map_zone_widget.dart';
+import 'package:epidemic_alarm/src/feature/map/zone/ui/zone_map_widget.dart';
 import 'package:flutter/material.dart';
 
 class MainPage extends StatefulWidget {
@@ -20,7 +20,7 @@ class _MainPageState extends State<MainPage> {
         centerTitle: true,
       ),
       body: Center(
-        child: MapZoneWidget(),
+        child: ZoneMapWidget(),
       )
     );
   }

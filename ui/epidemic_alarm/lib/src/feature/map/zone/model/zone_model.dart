@@ -2,7 +2,7 @@ import 'package:epidemic_alarm/src/logic/GeolocationService.dart';
 import 'package:epidemic_alarm/src/utility/configuration.dart';
 import 'package:flutter/material.dart';
 
-class MapZoneModel extends ChangeNotifier {
+class ZoneModel extends ChangeNotifier {
   static final List<double> rangeSteps = [10.0, 25.0, 50.0, 100.0, 250.0, 500.0, 1000.0];
 
   double _zoom;
@@ -10,7 +10,7 @@ class MapZoneModel extends ChangeNotifier {
   double _lat;
   double _lng;
 
-  MapZoneModel() {
+  ZoneModel() {
     _zoom = 11.0;
     _rangeIndex = 3;
     _lat = Constants.DEFAULT_POSITION.latitude;
@@ -78,16 +78,19 @@ class MapZoneModel extends ChangeNotifier {
     _lng = value;
   }
 
-  void positionCenter() {
+  Future<void> positionCenter() async {
     var position = Constants.DEFAULT_POSITION;
-    GeolocationService.getCurrentPosition()
-        .then((value) => position = value)
+    await GeolocationService.getCurrentPosition()
+        .then((value) {
+          position = value;
+          print("Position set to: ${position}");
+          _setLat(position.latitude);
+          _setLng(position.longitude);
+          notifyListeners();
+        })
         .catchError((e) {
           print("Got error: ${e}");
         });
-    _setLat(position.latitude);
-    _setLng(position.longitude);
-    notifyListeners();
   }
 
   void positionTo(double latitude, double longitude) {
