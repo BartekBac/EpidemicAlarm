@@ -8,15 +8,15 @@ class ZoneMarkerController {
 
   ZoneMarkerController() {
     _circleMarkers.add(
-      _createMarker(0, 0, 0)
+      _createMarker(0, 0, 0, Colors.transparent, Colors.transparent)
     );
   }
 
-  CircleMarker _createMarker(double lat, double lng, double range) {
-    return new CircleMarker(
+  CircleMarker _createMarker(double lat, double lng, double range, Color markerColor, Color markerBorderColor) {
+      return new CircleMarker(
         point: LatLng(lat, lng),
-        color: Colors.red.withOpacity(0.7),
-        borderColor: Colors.red,
+        color: markerColor,
+        borderColor: markerBorderColor,
         borderStrokeWidth: 2,
         useRadiusInMeter: true,
         radius: range // meters
@@ -34,10 +34,10 @@ class ZoneMarkerController {
     );
   }
 
-  void updateCircleMarker(double lat, double lng, double range) {
+  void updateCircleMarker(double lat, double lng, double range, Color markerColor, Color markerBorderColor) {
     _circleMarkers.clear();
     _circleMarkers.add(
-        _createMarker(lat, lng, range)
+        _createMarker(lat, lng, range, markerColor, markerBorderColor)
     );
   }
 

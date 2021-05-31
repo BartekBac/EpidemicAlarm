@@ -2,6 +2,8 @@ import 'package:geolocator/geolocator.dart';
 
 class Constants {
 
+  static final String EPIDEMIC_ALARM_API_BASE_URL = "http://10.0.2.2:8080/api/rest/";
+
   static final Position DEFAULT_POSITION = Position(
       latitude: 50.292222,
       longitude: 18.6675
