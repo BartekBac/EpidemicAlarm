@@ -63,76 +63,51 @@ class DistanceAccuracyTest {
     @Test
     void calculateFootballPitchLength() {
         //given
-        double fromLat = 50.30621763847188;//50.306159210166605;
-        double fromLng = 18.695974991098534;//18.69551734071908;
-
-        double toLat = 50.30714462308835;//50.30709038726973;
-        double toLng = 18.695714899594282;//18.695251543871603;
+        double[] coords = {50.30714560617742, 18.69571501739492, 50.306216769494874, 18.695977575123624};
 
         //then
         double expectedDistance = 105;
-
-        runAllStrategiesFor(fromLat, fromLng, toLat, toLng, expectedDistance);
+        runAllStrategiesFor(coords[0], coords[1], coords[2], coords[3], expectedDistance);
     }
 
     @Test
     void calculateFootballPitchLWidth() {
         //given
-        double fromLat = 50.30657180419198;//50.30657335410066;
-        double fromLng = 18.694908442938786;//18.69490817809401;
-
-        double toLat = 50.30668184608668;//50.30668299058186;
-        double toLng = 18.695845406463896;//18.695844269034996;
+        double[] coords = {50.30657173049385, 18.6949063313804, 50.30668121730405, 18.6958445827004};
 
         //then
         double expectedDistance = 68;
-
-        runAllStrategiesFor(fromLat, fromLng, toLat, toLng, expectedDistance);
+        runAllStrategiesFor(coords[0], coords[1], coords[2], coords[3], expectedDistance);
     }
 
     @Test
     void calculateRunway3200Length() {//Katowice-Pyrzowice
         //given
-        double fromLat = 50.47595330937944;//50.47595248859598;
-        double fromLng = 19.104649572437836;//19.104644561776578;
-
-        double toLat = 50.47604836247455;//50.47605265834345;
-        double toLng = 19.0596100937548; //19.05961330774401;
+        double[] coords = {50.47604976327174, 19.05960095634041, 50.47595237760386, 19.104657837280257};
 
         //then
         double expectedDistance = 3200;
-
-        runAllStrategiesFor(fromLat, fromLng, toLat, toLng, expectedDistance);
+        runAllStrategiesFor(coords[0], coords[1], coords[2], coords[3], expectedDistance);
     }
 
     @Test
     void calculateRunway2550Length() { // Krakow-Balice
         //given
-        double fromLat = 50.075404388171364;//50.075396979282154;
-        double fromLng = 19.768079302040263;//19.768075022366016;
-
-        double toLat = 50.08025707025488;//50.08025687682499;
-        double toLng = 19.80292005987431;//19.802919029252273;
+        double[] coords = {50.07540490730931, 19.76808607088357, 50.08024575247447, 19.80290017192372};
 
         //then
         double expectedDistance = 2550;
-
-        runAllStrategiesFor(fromLat, fromLng, toLat, toLng, expectedDistance);
+        runAllStrategiesFor(coords[0], coords[1], coords[2], coords[3], expectedDistance);
     }
 
     @Test
     void calculateRunway1200Length() {// Arłamów-Krajna
         //given
-        double fromLat = 49.65300391765174;
-        double fromLng = 22.516047870428682;
-
-        double toLat = 49.66352903014466;
-        double toLng = 22.512411380010406;
+        double[] coords = {49.65300391765174, 22.516047870428682, 49.66352903014466, 22.512411380010406};
 
         //then
         double expectedDistance = 1200;
-
-        runAllStrategiesFor(fromLat, fromLng, toLat, toLng, expectedDistance);
+        runAllStrategiesFor(coords[0], coords[1], coords[2], coords[3], expectedDistance);
     }
 
 }
