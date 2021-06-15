@@ -1,16 +1,11 @@
 package com.epidemicalarm.api.distance;
 
-import com.epidemicalarm.api.service.distance.DistanceService;
-import com.epidemicalarm.api.service.distance.HaversineFormula;
-import com.epidemicalarm.api.service.distance.Orthodroma;
-import com.epidemicalarm.api.service.distance.VincentyFormula;
+import com.epidemicalarm.api.service.distance.*;
 import com.epidemicalarm.api.service.distance.interfaces.IDistanceCalculationStrategy;
 import com.epidemicalarm.api.service.distance.interfaces.IDistanceService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.util.Assert;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -18,6 +13,9 @@ import java.math.RoundingMode;
 class DistancePerformanceTest {
 
     private static IDistanceService distanceService;
+    private static IDistanceCalculationStrategy sphericalCosineLaw;
+    private static IDistanceCalculationStrategy haversine;
+    private static IDistanceCalculationStrategy vincenty;
 
     private double fromLat = 50.13984915211152;
     private double fromLng = 18.87138099213793;
@@ -55,28 +53,26 @@ class DistancePerformanceTest {
         System.out.println("Parameters: [METHOD=" + method.getClass().getSimpleName() + ", LOOPS=" + N + "], time elapsed: " + round(time,  2)+ " ms.");
     }
 
+    private void runAllStrategiesFor(int loops) {
+        runCalculationWith(sphericalCosineLaw, loops);
+        runCalculationWith(haversine, loops);
+        runCalculationWith(vincenty, loops);
+    }
+
+
     @BeforeAll
     static void setDistanceService() {
         distanceService = new DistanceService();
+        sphericalCosineLaw = new SphericalCosineLaw();
+        haversine = new HaversineFormula();
+        vincenty = new VincentyFormula();
     }
 
     @Test
     void measureCalculationTimes(){
-        IDistanceCalculationStrategy orthodroma = new Orthodroma();
-        IDistanceCalculationStrategy haversine = new HaversineFormula();
-        IDistanceCalculationStrategy vincenty = new VincentyFormula();
-
-        runCalculationWith(orthodroma, 10000);
-        runCalculationWith(haversine, 10000);
-        runCalculationWith(vincenty, 10000);
-
-        runCalculationWith(orthodroma, 200000);
-        runCalculationWith(haversine, 200000);
-        runCalculationWith(vincenty, 200000);
-
-        runCalculationWith(orthodroma, 1000000);
-        runCalculationWith(haversine, 1000000);
-        runCalculationWith(vincenty, 1000000);
+        runAllStrategiesFor(10000);
+        runAllStrategiesFor(200000);
+        runAllStrategiesFor(1000000);
     }
 
 }

@@ -1,5 +1,6 @@
-import 'package:epidemic_alarm/src/logic/GeolocationService.dart';
-import 'package:epidemic_alarm/src/utility/configuration.dart';
+import 'package:epidemic_alarm/src/infrastructure/epidemic_alarm_client.dart';
+import 'package:epidemic_alarm/src/infrastructure/geolocator_client.dart';
+import 'package:epidemic_alarm/src/configuration.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong/latlong.dart';
 
@@ -10,18 +11,54 @@ class ZoneModel extends ChangeNotifier {
   double _range;
   double _lat;
   double _lng;
+  int _diagnosedCasesCount;
+
+
+  EpidemicAlarmClient _epidemicAlarmClient;
 
   ZoneModel() {
     _zoom = Constants.DEFAULT_ZOOM;
     _range = rangeSteps[3];
     _lat = Constants.DEFAULT_POSITION.latitude;
     _lng = Constants.DEFAULT_POSITION.longitude;
+    _epidemicAlarmClient = new EpidemicAlarmClient();
+    _diagnosedCasesCount = -1;
   }
 
   double get zoom => _zoom;
   double get range => _range;
   double get lat => _lat;
   double get lng => _lng;
+  Color get primaryColor {
+    if(_diagnosedCasesCount <= 0) {
+      return Colors.green;
+    }
+    if(_diagnosedCasesCount <= 10) {
+      return Colors.yellow;
+    }
+    if(_diagnosedCasesCount <= 100) {
+      return Colors.orange;
+    }
+    return Colors.red;
+  }
+  Color get secondaryColor {
+    if(_diagnosedCasesCount <= 0) {
+      return Colors.green.withOpacity(0.5);
+    }
+    if(_diagnosedCasesCount <= 1) {
+      return Colors.yellow.withOpacity(0.3);
+    }
+    if(_diagnosedCasesCount <= 10) {
+      return Colors.yellow.withOpacity(0.7);
+    }
+    if(_diagnosedCasesCount <= 50) {
+      return Colors.orange.withOpacity(0.3);
+    }
+    if(_diagnosedCasesCount <= 100) {
+      return Colors.orange.withOpacity(0.7);
+    }
+    return Colors.red.withOpacity(0.5);
+  }
 
   void _setZoom(double value) {
     if(value >= Constants.MAX_ZOOM) {
@@ -80,25 +117,25 @@ class ZoneModel extends ChangeNotifier {
   }
 
   Future<void> positionCenter() async {
-    var position = Constants.DEFAULT_POSITION;
-    await GeolocationService.getCurrentPosition()
+    await GeolocatorClient.getCurrentPosition()
         .then((value) {
-          position = value;
-          print("Position set to: ${position}");
-          _setLat(position.latitude);
-          _setLng(position.longitude);
-          notifyListeners();
+          positionTo(LatLng(value.latitude, value.longitude));
         })
         .catchError((e) {
           print("Got error: ${e}");
         });
   }
 
-  void positionTo(LatLng position) {
+  Future<void> positionTo(LatLng position) async {
     _setLat(position.latitude);
     _setLng(position.longitude);
+    await _epidemicAlarmClient.getActiveDiagnosedCasesInRange(position.latitude, position.longitude, _range)
+        .then((value) {
+          _diagnosedCasesCount = value.length;
+          print("Found ${_diagnosedCasesCount} diagnosed cases in range ${_range}");
+          notifyListeners();
+    });
     print("Position set to ${_lat}, ${_lng}");
-    notifyListeners();
   }
 
   void zoomTo(double value) {

@@ -1,7 +1,7 @@
 import 'package:epidemic_alarm/src/feature/map/zone/model/zone_model.dart';
 import 'package:epidemic_alarm/src/feature/map/zone/controller/zone_marker_controller.dart';
 import 'package:epidemic_alarm/src/feature/map/zone/ui/zone_menu_widget.dart';
-import 'package:epidemic_alarm/src/utility/configuration.dart';
+import 'package:epidemic_alarm/src/configuration.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
@@ -25,7 +25,7 @@ class _ZoneMapWidgetState extends State<ZoneMapWidget> {
   }
 
   void updatePositionMarker() {
-    zoneMarkerController.updateCircleMarker(zone.lat, zone.lng, zone.range);
+    zoneMarkerController.updateCircleMarker(zone.lat, zone.lng, zone.range, zone.secondaryColor, zone.primaryColor);
   }
 
   void updateCursorRange() {
@@ -33,8 +33,9 @@ class _ZoneMapWidgetState extends State<ZoneMapWidget> {
   }
 
   void updatePosition() {
-    zone.positionTo(mapController.center);
-    updatePositionMarker();
+    zone.positionTo(mapController.center)
+        .then((value) => updatePositionMarker()
+    );
   }
 
   void updateZoom() {
