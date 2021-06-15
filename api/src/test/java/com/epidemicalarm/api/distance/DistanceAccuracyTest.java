@@ -61,12 +61,12 @@ class DistanceAccuracyTest {
     }
 
     @Test
-    void calculateFootballPitchLength() {
+    void calculateFootballGoalWidth() {
         //given
-        double[] coords = {50.30714560617742, 18.69571501739492, 50.306216769494874, 18.695977575123624};
+        double[] coords = {50.30708405851866, 18.695194423907285, 50.30709604989234, 18.69529500674461};
 
         //then
-        double expectedDistance = 105;
+        double expectedDistance = 7.32;
         runAllStrategiesFor(coords[0], coords[1], coords[2], coords[3], expectedDistance);
     }
 
@@ -77,6 +77,16 @@ class DistanceAccuracyTest {
 
         //then
         double expectedDistance = 68;
+        runAllStrategiesFor(coords[0], coords[1], coords[2], coords[3], expectedDistance);
+    }
+
+    @Test
+    void calculateFootballPitchLength() {
+        //given
+        double[] coords = {50.30714560617742, 18.69571501739492, 50.306216769494874, 18.695977575123624};
+
+        //then
+        double expectedDistance = 105;
         runAllStrategiesFor(coords[0], coords[1], coords[2], coords[3], expectedDistance);
     }
 

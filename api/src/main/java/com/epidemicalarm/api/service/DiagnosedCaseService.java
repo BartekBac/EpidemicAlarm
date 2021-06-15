@@ -148,7 +148,6 @@ public class DiagnosedCaseService implements IDiagnosedCaseService {
              double distance = distanceService.calculate(lat, lng, diagnosedCase.getLocationLat(), diagnosedCase.getLocationLng());
              return distance <= range;
         });
-
         return diagnosedCases;
     }
 
