@@ -1,7 +1,6 @@
 import 'package:epidemic_alarm/src/feature/map/regions/controller/regions_geojson_controller.dart';
-import 'package:epidemic_alarm/src/feature/map/zone/model/zone_model.dart';
-import 'package:epidemic_alarm/src/feature/map/zone/controller/zone_marker_controller.dart';
-import 'package:epidemic_alarm/src/feature/map/zone/ui/zone_menu_widget.dart';
+import 'package:epidemic_alarm/src/feature/map/regions/model/regions_model.dart';
+import 'package:epidemic_alarm/src/feature/map/regions/ui/regions_menu_widget.dart';
 import 'package:epidemic_alarm/src/configuration.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -18,19 +17,33 @@ class RegionsMapWidget extends StatefulWidget {
 class _RegionsMapWidgetState extends State<RegionsMapWidget> {
   MapController mapController;
   RegionsGeojsonController regionsGeojsonController;
+  RegionsModel regions;
 
   /*void centerPositionAndMarker() {
     mapController.moveAndRotate(LatLng(zone.lat, zone.lng), mapController.zoom, 0.0);
     updatePositionMarker();
   }*/
 
+  void updateZoom() {
+    mapController.move(mapController.center, regions.zoom);
+  }
+
 
   @override
   void initState() {
     mapController = MapController();
     regionsGeojsonController = RegionsGeojsonController();
+    regionsGeojsonController.parseAndDrawAssetsOnMap();
     super.initState();
   }
+
+  @override
+  void didChangeDependencies() {
+    regions = Provider.of<RegionsModel>(context, listen: true);
+    /*zone.addListener(() => updatePositionAndMarker());*/
+    super.didChangeDependencies();
+  }
+
 
 
   @override
@@ -42,7 +55,7 @@ class _RegionsMapWidgetState extends State<RegionsMapWidget> {
               mapController: mapController,
               options: MapOptions(
                   center: LatLng(Constants.DEFAULT_POSITION.latitude, Constants.DEFAULT_POSITION.longitude),
-                  zoom: 8.0,
+                  zoom: regions.zoom,
                   minZoom: Constants.MIN_ZOOM,
                   maxZoom: Constants.MAX_ZOOM
               ),
@@ -55,20 +68,20 @@ class _RegionsMapWidgetState extends State<RegionsMapWidget> {
                 PolygonLayerOptions(polygons: RegionsGeojsonController.polygons)
               ],
             ),
-            /*ZoneMenuWidget(
-              onCenterButtonClick: () => centerPositionAndMarker(),
-              onRangeDropdownChange: () => updateCursorRange(),
+            RegionsMenuWidget(
+              //onCenterButtonClick: () => centerPositionAndMarker(),
+              //onRangeDropdownChange: () => updateCursorRange(),
               onZoomChange: () => updateZoom(),
-              onSearchButtonClick: () => updatePosition(),
-            )*/
+              //onSearchButtonClick: () => updatePosition(),
+            )
           ])
       ),
     );
   }
 
-/*@override
+@override
   void dispose() {
-    zone.removeListener(() => print("removed zone listener"));
+    regions.removeListener(() => print("removed regions listener"));
     super.dispose();
-  }*/
+  }
 }
