@@ -1,8 +1,8 @@
 import 'package:epidemic_alarm/src/feature/main/ui/main_page.dart';
+import 'package:epidemic_alarm/src/feature/map/fences/model/fences_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'feature/map/regions/model/regions_model.dart';
 import 'feature/map/zone/model/zone_model.dart';
 
 class App extends StatelessWidget {
@@ -16,7 +16,7 @@ class App extends StatelessWidget {
       theme: ThemeData.light(),
       routes: <String, WidgetBuilder>{
         '/': (context) => ChangeNotifierProvider(
-            create: (context) => RegionsModel(),
+            create: (context) => FencesModel(),
             child: MainPage()
         ),
         '/xd': (context) => ChangeNotifierProvider(
