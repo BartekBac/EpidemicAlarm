@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface IDiagnosedCaseService {
     DiagnosedCase findById(long id);
-    List<DiagnosedCase> findByParameters(Double lat, Double lng, Double range);
+    List<DiagnosedCase> findByParameters(Double lat, Double lng, Double range, String region, String subregion, String city, Boolean onlyActive);
     DiagnosedCase add(DiagnosedCaseDTO diagnosedCase) throws IOException, InterruptedException;
     DiagnosedCase update(long id, DiagnosedCaseDTO diagnosedCase) throws IOException, InterruptedException;
     void delete(long id);
