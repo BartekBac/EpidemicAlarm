@@ -18,8 +18,15 @@ public class DiagnosedCaseController {
     private IDiagnosedCaseService diagnosedCaseService;
 
     @GetMapping
-    public List<DiagnosedCase> findDiagnosedCasesByParameters(@RequestParam(required = false) Double lat, @RequestParam(required = false) Double lng, @RequestParam(required = false) Double range) {
-        return diagnosedCaseService.findByParameters(lat, lng, range, null, null);
+    public List<DiagnosedCase> findDiagnosedCasesByParameters(
+            @RequestParam(required = false) Double lat,
+            @RequestParam(required = false) Double lng,
+            @RequestParam(required = false) Double range,
+            @RequestParam(required = false) String region,
+            @RequestParam(required = false) String subregion,
+            @RequestParam(required = false) String city,
+            @RequestParam(required = false) Boolean onlyActive) {
+        return diagnosedCaseService.findByParameters(lat, lng, range, region, subregion, city, onlyActive);
     }
 
     @GetMapping("/{id}")

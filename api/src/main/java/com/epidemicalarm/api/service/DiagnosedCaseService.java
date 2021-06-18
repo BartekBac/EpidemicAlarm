@@ -146,24 +146,7 @@ public class DiagnosedCaseService implements IDiagnosedCaseService {
         }
     }
 
-    @Override
-    public List<DiagnosedCase> findByParameters(Double lat, Double lng, Double range, String region, Boolean onlyActive) {
-        if(onlyActive == null) onlyActive = true;
-
-        List<DiagnosedCase> diagnosedCases;
-        if(onlyActive) {
-            long borderTime = new java.util.Date().getTime() - MILLISECONDS_OF_DAY; // include cases to current day
-            Date borderDate = new Date(borderTime);
-            System.out.println(borderDate.getTime() + " = " + borderDate.toString());
-            diagnosedCases = diagnosedCaseRepository.findByExpirationDateAfter(borderDate);
-        } else {
-            diagnosedCases = diagnosedCaseRepository.findAll();
-        }
-
-        if(lat == null && lng == null && range == null) {
-            return diagnosedCases;
-        }
-
+    private List<DiagnosedCase> filterByRange(List<DiagnosedCase> diagnosedCases, Double lat, Double lng, Double range) {
         if(lat == null) {
             throw new InvalidRequestParameterException("LAT", "NULL", "Latitude cannot be null");
         }
@@ -189,10 +172,74 @@ public class DiagnosedCaseService implements IDiagnosedCaseService {
         }
 
         CollectionUtils.filter(diagnosedCases, dc -> {
-             DiagnosedCase diagnosedCase = ((DiagnosedCase) dc);
-             double distance = distanceService.calculate(lat, lng, diagnosedCase.getLocationLat(), diagnosedCase.getLocationLng());
-             return distance <= range;
+            DiagnosedCase diagnosedCase = ((DiagnosedCase) dc);
+            double distance = distanceService.calculate(lat, lng, diagnosedCase.getLocationLat(), diagnosedCase.getLocationLng());
+            return distance <= range;
         });
+
+        return diagnosedCases;
+    }
+
+    private List<DiagnosedCase> filterByRegion(List<DiagnosedCase> diagnosedCases, String region) {
+        CollectionUtils.filter(diagnosedCases, dc -> {
+            DiagnosedCase diagnosedCase = ((DiagnosedCase) dc);
+            return region.equals(diagnosedCase.getRegion());
+        });
+
+        return diagnosedCases;
+    }
+
+    private List<DiagnosedCase> filterBySubregion(List<DiagnosedCase> diagnosedCases, String subregion) {
+        CollectionUtils.filter(diagnosedCases, dc -> {
+            DiagnosedCase diagnosedCase = ((DiagnosedCase) dc);
+            return subregion.equals(diagnosedCase.getSubregion());
+        });
+
+        return diagnosedCases;
+    }
+
+    private List<DiagnosedCase> filterByCity(List<DiagnosedCase> diagnosedCases, String city) {
+        CollectionUtils.filter(diagnosedCases, dc -> {
+            DiagnosedCase diagnosedCase = ((DiagnosedCase) dc);
+            return city.equals(diagnosedCase.getCity());
+        });
+
+        return diagnosedCases;
+    }
+
+    @Override
+    public List<DiagnosedCase> findByParameters(Double lat, Double lng, Double range, String region, String subregion, String city, Boolean onlyActive) {
+        if(onlyActive == null) onlyActive = true;
+
+        List<DiagnosedCase> diagnosedCases;
+        if(onlyActive) {
+            // trim to active cases
+            long borderTime = new java.util.Date().getTime() - MILLISECONDS_OF_DAY; // include cases to current day
+            Date borderDate = new Date(borderTime);
+            diagnosedCases = diagnosedCaseRepository.findByExpirationDateAfter(borderDate);
+        } else {
+            // take all
+            diagnosedCases = diagnosedCaseRepository.findAll();
+        }
+
+        // range filter first priority
+        if(lat != null || lng != null || range != null) {
+            return filterByRange(diagnosedCases, lat, lng, range);
+        }
+
+        // city filter second priority
+        if(city != null)
+            return filterByCity(diagnosedCases, city);
+
+        // subregion filter third priority
+        if(subregion != null)
+            return filterBySubregion(diagnosedCases, subregion);
+
+        // region filter fourth priority
+        if(region != null)
+            return filterByRegion(diagnosedCases, region);
+
+        // if non parameters return all (or trimmed to active)
         return diagnosedCases;
     }
 
