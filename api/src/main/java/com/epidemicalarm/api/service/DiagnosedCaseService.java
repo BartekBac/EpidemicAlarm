@@ -37,6 +37,8 @@ public class DiagnosedCaseService implements IDiagnosedCaseService {
     private final IGeocoderService geocoderService;
     private final IDistanceService distanceService;
 
+    private static final long MILLISECONDS_OF_DAY = 24*60*60*1000;
+
     @Autowired
     public DiagnosedCaseService(IDiagnosedCaseRepository diagnosedCaseRepository, IIdentityRepository identityRepository, IInstitutionRepository institutionRepository, IDataAdministratorRepository dataAdministratorRepository, IGeocoderService geocoderService, IDistanceService distanceService) {
         this.diagnosedCaseRepository = diagnosedCaseRepository;
@@ -51,6 +53,20 @@ public class DiagnosedCaseService implements IDiagnosedCaseService {
         GeocoderPosition location = this.geocoderService.geocode(identityAddress);
         diagnosedCase.setLocationLat(location.lat);
         diagnosedCase.setLocationLng(location.lng);
+        diagnosedCase.setRegion(location.region);
+        diagnosedCase.setSubregion(location.subregion);
+        if(location.city != null) {
+            diagnosedCase.setCity(location.city);
+        } else {
+            diagnosedCase.setCity(identityAddress.getCity());
+        }
+    }
+
+    private void setDurationAndExpirationDate(DiagnosedCase diagnosedCase, int newDuration) {
+        long newExpirationTime = diagnosedCase.getDiagnosisDate().getTime() + MILLISECONDS_OF_DAY * newDuration;
+        Date newExpirationDate = new Date(newExpirationTime);
+        diagnosedCase.setDuration(newDuration);
+        diagnosedCase.setExpirationDate(newExpirationDate);
     }
 
     private void setDiagnosedCaseFields(DiagnosedCaseDTO diagnosedCaseDTO, DiagnosedCase diagnosedCaseToUpdate) throws IOException, InterruptedException {
@@ -58,6 +74,7 @@ public class DiagnosedCaseService implements IDiagnosedCaseService {
         Institution institution;
         DataAdministrator dataAdministrator;
         Address identityAddress;
+
         try {
             identity = identityRepository.findById(diagnosedCaseDTO.identity).get();
             identityAddress = identity.getAddress();
@@ -77,27 +94,45 @@ public class DiagnosedCaseService implements IDiagnosedCaseService {
         } catch (NoSuchElementException | InvalidDataAccessApiUsageException e) {
             throw new EntityNotFoundException("Data Administrator [ID="+diagnosedCaseDTO.introducer+"]");
         }
+
+        if(diagnosedCaseDTO.diagnosisDate == null) {
+            // default diagnosis date = current date
+            Date currentDate = new Date(new java.util.Date().getTime());
+            diagnosedCaseDTO.diagnosisDate = currentDate;
+        }
+
         diagnosedCaseToUpdate.setDiagnosisDate(diagnosedCaseDTO.diagnosisDate);
-        diagnosedCaseToUpdate.setDuration(diagnosedCaseDTO.duration);
         diagnosedCaseToUpdate.setStatus(diagnosedCaseDTO.status);
-        diagnosedCaseToUpdate.setExpirationDate(diagnosedCaseDTO.expirationDate);
+
+        if(diagnosedCaseDTO.expirationDate == null) {
+            // default expiration date = diagnosis date + duration
+            setDurationAndExpirationDate(diagnosedCaseToUpdate, diagnosedCaseDTO.duration);
+        } else {
+            diagnosedCaseToUpdate.setDuration(diagnosedCaseDTO.duration);
+            diagnosedCaseToUpdate.setExpirationDate(diagnosedCaseDTO.expirationDate);
+        }
+
         if(diagnosedCaseDTO.locationLat == null || diagnosedCaseDTO.locationLng == null) {
+            // default location is based on identity address
             try {
                 this.setLocation(diagnosedCaseToUpdate, identityAddress);
             } catch (Exception e){
                 log.severe("Internal error: " + e.toString());
-                log.warning("Cannot resolve location with default strategy, switching to HERE geolocation service...");
+                log.warning("Cannot resolve location with default strategy, switching to ArcGIS geolocation service...");
                 try {
                     this.geocoderService.setGeocoderStrategy(new GeocoderArcGIS());
                     this.setLocation(diagnosedCaseToUpdate,identityAddress);
                 } catch (Exception exception) {
-                    log.severe("Cannot resolve location with HERE strategy");
+                    log.severe("Cannot resolve location with ArcGIS strategy");
                     throw exception;
                 }
             }
         } else {
             diagnosedCaseToUpdate.setLocationLng(diagnosedCaseDTO.locationLng);
             diagnosedCaseToUpdate.setLocationLat(diagnosedCaseDTO.locationLat);
+            diagnosedCaseToUpdate.setRegion(diagnosedCaseDTO.region);
+            diagnosedCaseToUpdate.setSubregion(diagnosedCaseDTO.subregion);
+            diagnosedCaseToUpdate.setCity(diagnosedCaseDTO.city);
         }
     }
 
@@ -112,8 +147,18 @@ public class DiagnosedCaseService implements IDiagnosedCaseService {
     }
 
     @Override
-    public List<DiagnosedCase> findByParameters(Double lat, Double lng, Double range) {
-        List<DiagnosedCase> diagnosedCases = diagnosedCaseRepository.findAll();
+    public List<DiagnosedCase> findByParameters(Double lat, Double lng, Double range, String region, Boolean onlyActive) {
+        if(onlyActive == null) onlyActive = true;
+
+        List<DiagnosedCase> diagnosedCases;
+        if(onlyActive) {
+            long borderTime = new java.util.Date().getTime() - MILLISECONDS_OF_DAY; // include cases to current day
+            Date borderDate = new Date(borderTime);
+            System.out.println(borderDate.getTime() + " = " + borderDate.toString());
+            diagnosedCases = diagnosedCaseRepository.findByExpirationDateAfter(borderDate);
+        } else {
+            diagnosedCases = diagnosedCaseRepository.findAll();
+        }
 
         if(lat == null && lng == null && range == null) {
             return diagnosedCases;
@@ -181,11 +226,7 @@ public class DiagnosedCaseService implements IDiagnosedCaseService {
     @Override
     public DiagnosedCase updateDuration(long id, int newDuration) {
         DiagnosedCase diagnosedCase = this.findById(id);
-        diagnosedCase.setDuration(newDuration);
-        long oneDay = 24*60*60*1000;
-        long newExpirationTime = diagnosedCase.getDiagnosisDate().getTime() + oneDay * newDuration;
-        Date newExpirationDate = new Date(newExpirationTime);
-        diagnosedCase.setExpirationDate(newExpirationDate);
+        setDurationAndExpirationDate(diagnosedCase, newDuration);
         return diagnosedCaseRepository.save(diagnosedCase);
     }
 

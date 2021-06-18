@@ -19,7 +19,7 @@ public class DiagnosedCaseController {
 
     @GetMapping
     public List<DiagnosedCase> findDiagnosedCasesByParameters(@RequestParam(required = false) Double lat, @RequestParam(required = false) Double lng, @RequestParam(required = false) Double range) {
-        return diagnosedCaseService.findByParameters(lat, lng, range);
+        return diagnosedCaseService.findByParameters(lat, lng, range, null, null);
     }
 
     @GetMapping("/{id}")
