@@ -1,3 +1,4 @@
+import 'package:epidemic_alarm/src/feature/map/fences/ui/fences_map_widget.dart';
 import 'package:epidemic_alarm/src/feature/map/zone/ui/zone_map_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -20,7 +21,7 @@ class _MainPageState extends State<MainPage> {
         centerTitle: true,
       ),
       body: Center(
-        child: ZoneMapWidget(),
+        child: FencesMapWidget(),
       )
     );
   }
