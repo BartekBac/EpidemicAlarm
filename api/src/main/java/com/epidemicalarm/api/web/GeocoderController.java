@@ -15,7 +15,7 @@ public class GeocoderController {
     @Autowired
     private IGeocoderService geocoderService;
 
-    @GetMapping("/geocode")
+    @PostMapping("/geocode")
     public GeocoderPosition geocode(@Validated @RequestBody Address address) throws IOException, InterruptedException {
         return this.geocoderService.geocode(address);
     }
