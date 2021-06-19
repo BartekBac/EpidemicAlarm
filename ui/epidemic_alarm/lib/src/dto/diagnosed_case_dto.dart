@@ -10,6 +10,8 @@ class DiagnosedCase {
   int institution;
   int introducer;
 
+  // TODO: Add region/subregion/city
+
   DiagnosedCase({
       this.id,
       this.diagnosisDate,

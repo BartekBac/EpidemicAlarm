@@ -46,6 +46,8 @@ class FencesMarkerController {
     return LatLng(lat, lng);
   }
 
+  // TODO: here add methods such as addMarker or updateMarker which will set values of diagnoesdCases
+
   void showRegions() {
     polygons = _regionsPolygons;
     centroids = _regionsCentroids;
@@ -75,7 +77,7 @@ class FencesMarkerController {
                   Container(child: FlutterLogo())
           )
       );
-      print(feature.type.toString() + " => " + feature.properties.toString() + " ==> " + geoSerie.geoPoints.length.toString() + " ===> " + centroid.toString());
+      //print(feature.type.toString() + " => " + feature.properties.toString() + " ==> " + geoSerie.geoPoints.length.toString() + " ===> " + centroid.toString());
     });
 
     _geo.endSignal.listen((_) => _geo.dispose());

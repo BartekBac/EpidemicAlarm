@@ -2,8 +2,14 @@ import 'package:epidemic_alarm/src/infrastructure/epidemic_alarm_client.dart';
 import 'package:epidemic_alarm/src/configuration.dart';
 import 'package:flutter/material.dart';
 
+import 'fence_entity.dart';
+
 class FencesModel extends ChangeNotifier {
   double _zoom;
+
+  List<Fence> _regions;
+  List<Fence> _subregions;
+  List<Fence> _cities;
 
   EpidemicAlarmClient _epidemicAlarmClient;
 
