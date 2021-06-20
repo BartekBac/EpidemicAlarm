@@ -20,8 +20,6 @@ class _FencesMapWidgetState extends State<FencesMapWidget> {
   FencesMarkerController fencesMarkerController;
   FencesModel fences;
 
-  BdlClient tmp = new BdlClient();
-
   /*void centerPositionAndMarker() {
     mapController.moveAndRotate(LatLng(zone.lat, zone.lng), mapController.zoom, 0.0);
     updatePositionMarker();
@@ -40,14 +38,13 @@ class _FencesMapWidgetState extends State<FencesMapWidget> {
     //fencesMarkerController.renderRegionsPolygons().then((value) => fencesMarkerController.showRegions());
     //fencesMarkerController.renderSubregionsPolygons().then((value) => fencesMarkerController.showSubregions());
 
-    tmp.getRegions();
-
     super.initState();
   }
 
   @override
   void didChangeDependencies() {
     fences = Provider.of<FencesModel>(context, listen: true);
+    fences.initFences().then((value) => print("fences initialized"));
     /*zone.addListener(() => updatePositionAndMarker());*/
     super.didChangeDependencies();
   }
