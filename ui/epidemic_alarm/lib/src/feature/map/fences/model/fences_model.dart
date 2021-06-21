@@ -1,13 +1,17 @@
 import 'package:epidemic_alarm/src/dto/diagnosed_case_dto.dart';
 import 'package:epidemic_alarm/src/dto/region_unit_dto.dart';
-import 'package:epidemic_alarm/src/infrastructure/bdl_api_client.dart';
 import 'package:epidemic_alarm/src/infrastructure/epidemic_alarm_client.dart';
 import 'package:epidemic_alarm/src/configuration.dart';
 import 'package:flutter/material.dart';
 
 class FencesModel extends ChangeNotifier {
+  EpidemicAlarmClient _epidemicAlarmClient = new EpidemicAlarmClient();
+
+  static final List<String> SCOPES = <String>[];
+  static final String GENERAL_SCOPE_NAME = "polska";
+
   double _zoom;
-  bool _regionsLoaded;
+  String _activeScope;
 
   List<DiagnosedCase> _diagnosedCases;
   List<RegionUnit> _regions;
@@ -18,14 +22,8 @@ class FencesModel extends ChangeNotifier {
   RegionUnit _otherSubregion;
   RegionUnit _otherCity;
 
-  EpidemicAlarmClient _epidemicAlarmClient;
-  BdlClient _bdlClient;
-
   FencesModel() {
     _zoom = 8.0;//Constants.DEFAULT_ZOOM;
-    _regionsLoaded = false;
-    _epidemicAlarmClient = new EpidemicAlarmClient();
-    _bdlClient = new BdlClient();
     _regions = <RegionUnit>[];
     _subregions = <RegionUnit>[];
     _cities = <RegionUnit>[];
@@ -35,7 +33,23 @@ class FencesModel extends ChangeNotifier {
   }
 
   double get zoom => _zoom;
-  bool get regionsLoaded => _regionsLoaded;
+  String get activeScope => _activeScope;
+  List<RegionUnit> get regions => _regions;
+  List<RegionUnit> get subregions => _subregions;
+  List<RegionUnit> get cities => _cities;
+  RegionUnit get otherRegion => _otherRegion;
+  RegionUnit get otherSubregion => _otherSubregion;
+  RegionUnit get otherCity => _otherCity;
+  List<DiagnosedCase> get diagnosedCases => _diagnosedCases;
+
+  List<RegionUnit> get activeScopeRegionUnits {
+    if(_activeScope == GENERAL_SCOPE_NAME) {
+      return _regions;
+    } else {
+      String parentRegionId = _regions.firstWhere((region) => region.name == _activeScope).id;
+      return _subregions.where((subregion) => subregion.parentId == parentRegionId);
+    }
+  }
 
   void _setZoom(double value) {
     if(value >= Constants.MAX_ZOOM) {
@@ -51,19 +65,62 @@ class FencesModel extends ChangeNotifier {
     _zoom = value;
   }
 
-
-  void zoomTo(double value) {
-    _setZoom(value);
-    print("Zoom set to: ${_zoom}");
-    notifyListeners();
+  Future<void> _fetchAllActiveDiagnosedCases() async {
+    this._diagnosedCases = await _epidemicAlarmClient.getAllActiveDiagnosedCases();
   }
 
-  Future<void> initFences() async {
-    // fetch all data from servers
-    await _fetchAllActiveDiagnosedCases();
-    await _fetchRegions();
-    await _fetchSubregions();
+  void setRegions(List<RegionUnit> regions) {
+    this._regions = regions;
+    print("SET REGIONS: " + this._regions.length.toString());
+    SCOPES.clear();
+    SCOPES.add(GENERAL_SCOPE_NAME);
+    if(_regions.isNotEmpty) {
+      _regions.forEach((region) => SCOPES.add(region.name));
+    }
+    _activeScope = SCOPES[0];
+  }
 
+  void setSubregions(List<RegionUnit> subregions) {
+    this._subregions = subregions;
+  }
+
+  Future<void> updateSubregionsAndCitiesCounts() async {
+    await _fetchAllActiveDiagnosedCases();
+    _diagnosedCases.forEach((diagnosedCase) {
+      RegionUnit subregionToUpdate = this._subregions.firstWhere((subregion) =>
+      subregion.name == (diagnosedCase.subregion ?? _otherSubregion.name),
+          orElse: () => _otherSubregion);
+      RegionUnit cityToUpdate = this._cities.firstWhere((city) =>
+      city.name == (diagnosedCase.city ?? _otherCity.name), orElse: () {
+        if (diagnosedCase.city != null) {
+          RegionUnit newCity = RegionUnit(
+              id: this._cities.length.toString(),
+              name: diagnosedCase.city,
+              parentId: subregionToUpdate.id,
+              diagnosedCasesCount: 0
+          );
+          this._cities.add(newCity);
+          return newCity;
+        } else {
+          return _otherCity;
+        }
+      });
+
+      subregionToUpdate.diagnosedCasesCount++;
+      cityToUpdate.diagnosedCasesCount++;
+    });
+  }
+
+  Future<void> updateRegionsCounts() async {
+    await _fetchAllActiveDiagnosedCases();
+    _diagnosedCases.forEach((diagnosedCase) {
+      RegionUnit regionToUpdate = this._regions.firstWhere((region) => region.name == (diagnosedCase.region ?? _otherRegion.name), orElse: () => _otherRegion);
+      regionToUpdate.diagnosedCasesCount++;
+    });
+  }
+
+  Future<void> updateAllCounts() async {
+    await _fetchAllActiveDiagnosedCases();
     // update in parallel region/subregion/city counters
     _diagnosedCases.forEach((diagnosedCase) {
       RegionUnit regionToUpdate = this._regions.firstWhere((region) => region.name == (diagnosedCase.region ?? _otherRegion.name), orElse: () => _otherRegion);
@@ -97,17 +154,9 @@ class FencesModel extends ChangeNotifier {
     print("Other City: " + _otherCity.diagnosedCasesCount.toString());
   }
 
-  Future<void> _fetchAllActiveDiagnosedCases() async {
-    this._diagnosedCases = await _epidemicAlarmClient.getAllActiveDiagnosedCases();
+  void zoomTo(double value) {
+    _setZoom(value);
+    print("Zoom set to: ${_zoom}");
+    notifyListeners();
   }
-
-  Future<void> _fetchRegions() async {
-    this._regions = await _bdlClient.getRegions();
-  }
-
-  Future<void> _fetchSubregions() async {
-    this._subregions = await _bdlClient.getAllSubregions();
-    this._subregions.removeWhere((subregion) => subregion.name == "Wałbrzych od 2013");
-  }
-
 }

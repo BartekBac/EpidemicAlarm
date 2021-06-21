@@ -1,7 +1,9 @@
 import 'package:epidemic_alarm/src/configuration.dart';
+import 'package:epidemic_alarm/src/dto/region_unit_dto.dart';
 import 'package:epidemic_alarm/src/feature/map/fences/controller/adapters/regions_low_resolution.dart';
 import 'package:epidemic_alarm/src/feature/map/fences/controller/adapters/resolution_startegy.dart';
 import 'package:epidemic_alarm/src/feature/map/fences/controller/adapters/subregions_low_resolution.dart';
+import 'package:epidemic_alarm/src/feature/map/fences/controller/fence_marker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:geojson/geojson.dart';
@@ -13,16 +15,13 @@ class FencesMarkerController {
 
   final ResolutionStartegy _regionsResolution = new RegionsLowResolution();
   final ResolutionStartegy _subregionsResolution = new SubregionsLowResolution();
-  final GeoJson _geo = GeoJson();
   static List<Polygon> polygons = <Polygon>[];
   static List<Marker> centroids = <Marker>[];
 
-  List<Polygon> _regionsPolygons = <Polygon>[];
-  List<Marker> _regionsCentroids = <Marker>[];
-  List<Polygon> _subregionsPolygons = <Polygon>[];
-  List<Marker> _subregionsCentroids = <Marker>[];
+  List<FenceMarker> _regionFenceMarkers = <FenceMarker>[];
+  List<FenceMarker> _subregionFenceMarkers = <FenceMarker>[];
 
-  LatLng _getCentroid(List<GeoPoint> geoPoints) {
+  LatLng _calculateCentroid(List<GeoPoint> geoPoints) {
     double xMin = Constants.MAX_LNG;
     double xMax = Constants.MIN_LNG;
     double yMin = Constants.MAX_LAT;
@@ -46,50 +45,63 @@ class FencesMarkerController {
     return LatLng(lat, lng);
   }
 
-  // TODO: here add methods such as addMarker or updateMarker which will set values of diagnoesdCases
+  // TODO: here add methods such as addMarker or updateMarker which will set values of diagnosedCases
 
-  void showRegions() {
-    polygons = _regionsPolygons;
-    centroids = _regionsCentroids;
+  Future<void> init() async {
+    await _fetchRegionsPolygons();
+    await _fetchSubregionsPolygons();
   }
 
-  void showSubregions() {
+  void showRegions(List<RegionUnit> regions) {
+    _regionFenceMarkers.forEach((regionMarker) {
+      regionMarker.diagnosedCasesCount = regions.firstWhere((region) => region.name == regionMarker.name).diagnosedCasesCount;
+    });
+    polygons = _regionFenceMarkers.map((fenceMarker) => fenceMarker.polygon).toList();
+    print("Showed polygons: " + polygons.length.toString());
+    centroids = _regionFenceMarkers.map((fenceMarker) => fenceMarker.centroidMarker).toList();
+  }
+
+  void showSubregions(List<String> subregionNames) {
     // TODO: cut it to specific region's subregions
-    polygons = _subregionsPolygons;
-    centroids = _subregionsCentroids;
+    //polygons = _subregionsPolygons.where((subregion) => subregionNames.any((subregionName) => subregionName == subregion.));
+    List<FenceMarker> filteredSubregionFenceMarkers = _subregionFenceMarkers
+        .where((fenceMarker) => subregionNames.any((subregionName) => subregionName == fenceMarker.name));
+    polygons = filteredSubregionFenceMarkers.map((fenceMarker) => fenceMarker.polygon).toList();
+    centroids = filteredSubregionFenceMarkers.map((fenceMarker) => fenceMarker.centroidMarker).toList();
   }
 
-  Future<void> _renderPolygons(ResolutionStartegy resolution, polygons, centroids) async {
-    _geo.processedFeatures.listen((GeoJsonFeature feature) {
+  Future<void> _fetchPolygons(ResolutionStartegy resolution, List<FenceMarker> fenceMarkers) async {
+    final GeoJson geo = GeoJson();
+    geo.processedFeatures.listen((GeoJsonFeature feature) {
       GeoSerie geoSerie = resolution.getGeoSerie(feature.geometry);
-      LatLng centroid = _getCentroid(geoSerie.geoPoints);
-      polygons.add(
-          Polygon(
-              points:geoSerie.toLatLng(),
-              color: Colors.greenAccent.withOpacity(0.2),
-              borderStrokeWidth: 1.0,
-              borderColor: Colors.red)
+      LatLng centroid = _calculateCentroid(geoSerie.geoPoints);
+
+      Polygon polygon = Polygon(
+          points:geoSerie.toLatLng(),
+          color: Colors.greenAccent.withOpacity(0.2),
+          borderStrokeWidth: 1.0,
+          borderColor: Colors.red);
+
+      FenceMarker fenceMarker = FenceMarker(
+        name: feature.properties['nazwa'],
+        polygon: polygon,
+        centroid: centroid,
+        diagnosedCasesCount: 0
       );
-      centroids.add(
-          Marker(
-              point: centroid,
-              builder: (ctx) =>
-                  Container(child: FlutterLogo())
-          )
-      );
-      //print(feature.type.toString() + " => " + feature.properties.toString() + " ==> " + geoSerie.geoPoints.length.toString() + " ===> " + centroid.toString());
+      fenceMarkers.add(fenceMarker);
+      print(feature.type.toString() + " => " + feature.properties['nazwa'].toString() + " ==> " + geoSerie.geoPoints.length.toString() + " ===> " + centroid.toString());
     });
 
-    _geo.endSignal.listen((_) => _geo.dispose());
+    geo.endSignal.listen((_) => geo.dispose());
     final data = await rootBundle.loadString(resolution.getFileName());
-    await _geo.parse(data, verbose: true);
+    await geo.parse(data, verbose: true);
   }
 
-  Future<void> renderSubregionsPolygons() async {
-    _renderPolygons(_subregionsResolution, _subregionsPolygons, _subregionsCentroids);
+  Future<void> _fetchSubregionsPolygons() async {
+    await _fetchPolygons(_subregionsResolution, _subregionFenceMarkers);
   }
 
-  Future<void> renderRegionsPolygons() async {
-    _renderPolygons(_regionsResolution, _regionsPolygons, _regionsCentroids);
+  Future<void> _fetchRegionsPolygons() async {
+    await _fetchPolygons(_regionsResolution, _regionFenceMarkers);
   }
 }

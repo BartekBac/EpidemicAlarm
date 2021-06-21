@@ -1,4 +1,5 @@
 import 'package:epidemic_alarm/src/feature/map/fences/controller/fences_marker_controller.dart';
+import 'package:epidemic_alarm/src/feature/map/fences/controller/fences_region_controller.dart';
 import 'package:epidemic_alarm/src/feature/map/fences/model/fences_model.dart';
 import 'package:epidemic_alarm/src/feature/map/fences/ui/fences_menu_widget.dart';
 import 'package:epidemic_alarm/src/configuration.dart';
@@ -16,8 +17,9 @@ class FencesMapWidget extends StatefulWidget {
 }
 
 class _FencesMapWidgetState extends State<FencesMapWidget> {
-  MapController mapController;
-  FencesMarkerController fencesMarkerController;
+  MapController mapController = MapController();
+  FencesMarkerController fencesMarkerController = FencesMarkerController();
+  FencesRegionController fencesRegionController = FencesRegionController();
   FencesModel fences;
 
   /*void centerPositionAndMarker() {
@@ -32,19 +34,31 @@ class _FencesMapWidgetState extends State<FencesMapWidget> {
 
   @override
   void initState() {
-    mapController = MapController();
-    fencesMarkerController = FencesMarkerController();
-    // TODO: try to run it async
-    //fencesMarkerController.renderRegionsPolygons().then((value) => fencesMarkerController.showRegions());
-    //fencesMarkerController.renderSubregionsPolygons().then((value) => fencesMarkerController.showSubregions());
+
+    // TODO: try to run in parallel:
+    // fencesMarkerController.init()
+    // fencesRegionController.getRegions()
+    // or unify it
+    fencesMarkerController.init().then((_) {
+      fencesRegionController.getRegions().then((regions) {
+        print("REGION COUNT: " + regions.length.toString());
+        fences.setRegions(regions);
+        fences.updateRegionsCounts().then((value) {
+          fencesMarkerController.showRegions(regions);
+        });
+      });
+    });
+    //fencesRegionController.getSubregions().then((subregions) => fences.setSubregions(subregions));
 
     super.initState();
   }
 
   @override
   void didChangeDependencies() {
+    //mapController = MapController();
+    //fencesMarkerController = FencesMarkerController();
     fences = Provider.of<FencesModel>(context, listen: true);
-    fences.initFences().then((value) => print("fences initialized"));
+    //fences.initFences().then((value) => print("fences initialized"));
     /*zone.addListener(() => updatePositionAndMarker());*/
     super.didChangeDependencies();
   }
