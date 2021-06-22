@@ -13,6 +13,10 @@ class FencesModel extends ChangeNotifier {
   double _zoom;
   String _activeScope;
 
+  set activeScope(String value) {
+    _activeScope = value;
+  }
+
   List<DiagnosedCase> _diagnosedCases;
   List<RegionUnit> _regions;
   List<RegionUnit> _subregions;
@@ -47,7 +51,7 @@ class FencesModel extends ChangeNotifier {
       return _regions;
     } else {
       String parentRegionId = _regions.firstWhere((region) => region.name == _activeScope).id;
-      return _subregions.where((subregion) => subregion.parentId == parentRegionId);
+      return _subregions.where((subregion) => subregion.id.startsWith(parentRegionId.substring(0, 3))).toList();
     }
   }
 
@@ -71,7 +75,6 @@ class FencesModel extends ChangeNotifier {
 
   void setRegions(List<RegionUnit> regions) {
     this._regions = regions;
-    print("SET REGIONS: " + this._regions.length.toString());
     SCOPES.clear();
     SCOPES.add(GENERAL_SCOPE_NAME);
     if(_regions.isNotEmpty) {
@@ -146,12 +149,12 @@ class FencesModel extends ChangeNotifier {
     });
 
     // print
-    this._regions.forEach((region) => print(region.name +" ["+ region.id.toString() + "]: " + region.diagnosedCasesCount.toString()));
-    this._subregions.forEach((subregion) => print(subregion.name +" ["+ subregion.id.toString() + "]: " + subregion.diagnosedCasesCount.toString()));
-    this._cities.forEach((city) => print(city.name +" ["+ city.id.toString() + ", parent: " + city.parentId + "]: " + city.diagnosedCasesCount.toString()));
-    print("Other Region: " + _otherRegion.diagnosedCasesCount.toString());
-    print("Other Subregion: " + _otherSubregion.diagnosedCasesCount.toString());
-    print("Other City: " + _otherCity.diagnosedCasesCount.toString());
+    //this._regions.forEach((region) => print(region.name +" ["+ region.id.toString() + "]: " + region.diagnosedCasesCount.toString()));
+    //this._subregions.forEach((subregion) => print(subregion.name +" ["+ subregion.id.toString() + "]: " + subregion.diagnosedCasesCount.toString()));
+    //this._cities.forEach((city) => print(city.name +" ["+ city.id.toString() + ", parent: " + city.parentId + "]: " + city.diagnosedCasesCount.toString()));
+    //print("Other Region: " + _otherRegion.diagnosedCasesCount.toString());
+    //print("Other Subregion: " + _otherSubregion.diagnosedCasesCount.toString());
+    //print("Other City: " + _otherCity.diagnosedCasesCount.toString());
   }
 
   void zoomTo(double value) {

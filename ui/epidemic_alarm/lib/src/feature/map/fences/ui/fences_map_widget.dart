@@ -44,11 +44,19 @@ class _FencesMapWidgetState extends State<FencesMapWidget> {
         print("REGION COUNT: " + regions.length.toString());
         fences.setRegions(regions);
         fences.updateRegionsCounts().then((value) {
-          fencesMarkerController.showRegions(regions);
+          //fencesMarkerController.showRegions(regions);
+        });
+        fencesRegionController.getSubregions().then((subregions) {
+          fences.setSubregions(subregions);
+          fences.updateSubregionsAndCitiesCounts().then((value) {
+            fences.activeScope = 'śląskie';
+            fencesMarkerController.showSubregions(fences.activeScopeRegionUnits);
+          });
         });
       });
+
     });
-    //fencesRegionController.getSubregions().then((subregions) => fences.setSubregions(subregions));
+    //
 
     super.initState();
   }

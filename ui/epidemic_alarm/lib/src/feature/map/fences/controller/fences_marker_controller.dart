@@ -45,8 +45,6 @@ class FencesMarkerController {
     return LatLng(lat, lng);
   }
 
-  // TODO: here add methods such as addMarker or updateMarker which will set values of diagnosedCases
-
   Future<void> init() async {
     await _fetchRegionsPolygons();
     await _fetchSubregionsPolygons();
@@ -57,17 +55,22 @@ class FencesMarkerController {
       regionMarker.diagnosedCasesCount = regions.firstWhere((region) => region.name == regionMarker.name).diagnosedCasesCount;
     });
     polygons = _regionFenceMarkers.map((fenceMarker) => fenceMarker.polygon).toList();
-    print("Showed polygons: " + polygons.length.toString());
     centroids = _regionFenceMarkers.map((fenceMarker) => fenceMarker.centroidMarker).toList();
   }
 
-  void showSubregions(List<String> subregionNames) {
-    // TODO: cut it to specific region's subregions
-    //polygons = _subregionsPolygons.where((subregion) => subregionNames.any((subregionName) => subregionName == subregion.));
+  void showSubregions(List<RegionUnit> subregions) {
     List<FenceMarker> filteredSubregionFenceMarkers = _subregionFenceMarkers
-        .where((fenceMarker) => subregionNames.any((subregionName) => subregionName == fenceMarker.name));
+        .where((fenceMarker) => subregions.any((subregion) => subregion.name == fenceMarker.name)).toList();
+    filteredSubregionFenceMarkers.forEach((subregionMarker) {
+      subregionMarker.diagnosedCasesCount = subregions.firstWhere((subregion) => subregion.name == subregionMarker.name).diagnosedCasesCount;
+    });
     polygons = filteredSubregionFenceMarkers.map((fenceMarker) => fenceMarker.polygon).toList();
+    print("Showed polygons: " + polygons.length.toString() + "/" + _subregionFenceMarkers.length.toString() + "/" + subregions.length.toString());
     centroids = filteredSubregionFenceMarkers.map((fenceMarker) => fenceMarker.centroidMarker).toList();
+  }
+
+  String _parseName(String name) {
+    return name.replaceFirst("powiat ", "");
   }
 
   Future<void> _fetchPolygons(ResolutionStartegy resolution, List<FenceMarker> fenceMarkers) async {
@@ -76,6 +79,7 @@ class FencesMarkerController {
       GeoSerie geoSerie = resolution.getGeoSerie(feature.geometry);
       LatLng centroid = _calculateCentroid(geoSerie.geoPoints);
 
+      // TODO: bug: for some subregions are defined multipolygons etc "rybnicki" but shown is only one (and one centroid)
       Polygon polygon = Polygon(
           points:geoSerie.toLatLng(),
           color: Colors.greenAccent.withOpacity(0.2),
@@ -83,13 +87,13 @@ class FencesMarkerController {
           borderColor: Colors.red);
 
       FenceMarker fenceMarker = FenceMarker(
-        name: feature.properties['nazwa'],
+        name: _parseName(feature.properties['nazwa']),
         polygon: polygon,
         centroid: centroid,
         diagnosedCasesCount: 0
       );
       fenceMarkers.add(fenceMarker);
-      print(feature.type.toString() + " => " + feature.properties['nazwa'].toString() + " ==> " + geoSerie.geoPoints.length.toString() + " ===> " + centroid.toString());
+      //print(feature.type.toString() + " => " + feature.properties['nazwa'].toString() + " ==> " + geoSerie.geoPoints.length.toString() + " ===> " + centroid.toString());
     });
 
     geo.endSignal.listen((_) => geo.dispose());
