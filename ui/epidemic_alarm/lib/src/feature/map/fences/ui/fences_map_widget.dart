@@ -31,6 +31,15 @@ class _FencesMapWidgetState extends State<FencesMapWidget> {
     mapController.move(mapController.center, fences.zoom);
   }
 
+  void updateDisplayedRegions() {
+    if(fences.activeScope == FencesModel.GENERAL_SCOPE_NAME) {
+      fencesMarkerController.showRegions(fences.activeScopeRegionUnits);
+    } else {
+      fencesMarkerController.showSubregions(fences.activeScopeRegionUnits);
+    }
+    mapController.move(mapController.center, fences.zoom);
+  }
+
 
   @override
   void initState() {
@@ -51,6 +60,7 @@ class _FencesMapWidgetState extends State<FencesMapWidget> {
           fences.updateSubregionsAndCitiesCounts().then((value) {
             fences.activeScope = 'śląskie';
             fencesMarkerController.showSubregions(fences.activeScopeRegionUnits);
+            mapController.move(mapController.center, fences.zoom);
           });
         });
       });
@@ -98,7 +108,7 @@ class _FencesMapWidgetState extends State<FencesMapWidget> {
             ),
             FencesMenuWidget(
               //onCenterButtonClick: () => centerPositionAndMarker(),
-              //onRangeDropdownChange: () => updateCursorRange(),
+              onRegionDropdownChange: () => updateDisplayedRegions(),
               onZoomChange: () => updateZoom(),
               //onSearchButtonClick: () => updatePosition(),
             )

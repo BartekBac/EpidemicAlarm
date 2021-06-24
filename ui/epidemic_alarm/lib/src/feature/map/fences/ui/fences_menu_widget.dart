@@ -1,10 +1,12 @@
 import 'package:epidemic_alarm/src/feature/map/fences/model/fences_model.dart';
+import 'package:epidemic_alarm/src/feature/map/fences/ui/region_dropdown_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class FencesMenuWidget extends StatelessWidget {
-  const FencesMenuWidget({Key key, this.onZoomChange}) : super(key: key);
+  const FencesMenuWidget({Key key, this.onZoomChange, this.onRegionDropdownChange}) : super(key: key);
   final VoidCallback onZoomChange;
+  final VoidCallback onRegionDropdownChange;
 
   @override
   Widget build(BuildContext context) {
@@ -13,6 +15,10 @@ class FencesMenuWidget extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Stack(children: <Widget>[
+            Align(
+              alignment: Alignment.topCenter,
+              child: RegionDropdownWidget(onRegionDropdownChange: () => onRegionDropdownChange()),
+            ),
             Align(
               alignment: Alignment.topRight,
               child: Column(
