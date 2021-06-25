@@ -1,9 +1,7 @@
 import 'package:epidemic_alarm/src/feature/map/fences/controller/fences_marker_controller.dart';
-import 'package:epidemic_alarm/src/feature/map/fences/controller/fences_region_controller.dart';
 import 'package:epidemic_alarm/src/feature/map/fences/model/fences_model.dart';
 import 'package:epidemic_alarm/src/feature/map/fences/ui/fences_menu_widget.dart';
 import 'package:epidemic_alarm/src/configuration.dart';
-import 'package:epidemic_alarm/src/infrastructure/bdl_api_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
@@ -19,7 +17,6 @@ class FencesMapWidget extends StatefulWidget {
 class _FencesMapWidgetState extends State<FencesMapWidget> {
   MapController mapController = MapController();
   FencesMarkerController fencesMarkerController = FencesMarkerController();
-  FencesRegionController fencesRegionController = FencesRegionController();
   FencesModel fences;
 
   /*void centerPositionAndMarker() {
@@ -32,11 +29,11 @@ class _FencesMapWidgetState extends State<FencesMapWidget> {
   }
 
   void updateDisplayedRegions() {
-    if(fences.activeScope == FencesModel.GENERAL_SCOPE_NAME) {
-      fencesMarkerController.showRegions(fences.activeScopeRegionUnits);
+    /*if(fences.activeScope == FencesModel.GENERAL_SCOPE_NAME) {
+      fencesMarkerController.showRegions(fences.activeScopeMarkers);
     } else {
-      fencesMarkerController.showSubregions(fences.activeScopeRegionUnits);
-    }
+      fencesMarkerController.showSubregions(fences.activeScopeMarkers);
+    }*/
     mapController.move(mapController.center, fences.zoom);
   }
 
@@ -48,7 +45,11 @@ class _FencesMapWidgetState extends State<FencesMapWidget> {
     // fencesMarkerController.init()
     // fencesRegionController.getRegions()
     // or unify it
-    fencesMarkerController.init().then((_) {
+    /*fencesMarkerController.init().then((_) =>
+        fences.init(fencesMarkerController.fenceMarkers).then((__) =>
+            fencesMarkerController.showMarkers(fences.activeScopeMarkers))
+    );*/
+    /*fencesMarkerController.init().then((_) {
       fencesRegionController.getRegions().then((regions) {
         print("REGION COUNT: " + regions.length.toString());
         fences.setRegions(regions);
@@ -65,7 +66,7 @@ class _FencesMapWidgetState extends State<FencesMapWidget> {
         });
       });
 
-    });
+    });*/
     //
 
     super.initState();
@@ -75,7 +76,9 @@ class _FencesMapWidgetState extends State<FencesMapWidget> {
   void didChangeDependencies() {
     //mapController = MapController();
     //fencesMarkerController = FencesMarkerController();
+    // TODO: move fences model to build context below and find out where call provider's init func
     fences = Provider.of<FencesModel>(context, listen: true);
+    fences.init().then((_) => fencesMarkerController.showMarkers(fences.activeScopeMarkers));
     //fences.initFences().then((value) => print("fences initialized"));
     /*zone.addListener(() => updatePositionAndMarker());*/
     super.didChangeDependencies();
