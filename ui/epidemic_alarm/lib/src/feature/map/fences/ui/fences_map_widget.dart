@@ -16,113 +16,53 @@ class FencesMapWidget extends StatefulWidget {
 
 class _FencesMapWidgetState extends State<FencesMapWidget> {
   MapController mapController = MapController();
-  FencesMarkerController fencesMarkerController = FencesMarkerController();
-  FencesModel fences;
 
   /*void centerPositionAndMarker() {
     mapController.moveAndRotate(LatLng(zone.lat, zone.lng), mapController.zoom, 0.0);
     updatePositionMarker();
   }*/
 
-  void updateZoom() {
+  void updateZoom(double zoom) {
+    mapController.move(mapController.center, zoom);
+  }
+
+  void updateDisplayedRegions(FencesModel fences) {
+    FencesMarkerController.showMarkers(fences.activeScopeMarkers);
     mapController.move(mapController.center, fences.zoom);
   }
-
-  void updateDisplayedRegions() {
-    /*if(fences.activeScope == FencesModel.GENERAL_SCOPE_NAME) {
-      fencesMarkerController.showRegions(fences.activeScopeMarkers);
-    } else {
-      fencesMarkerController.showSubregions(fences.activeScopeMarkers);
-    }*/
-    mapController.move(mapController.center, fences.zoom);
-  }
-
-
-  @override
-  void initState() {
-
-    // TODO: try to run in parallel:
-    // fencesMarkerController.init()
-    // fencesRegionController.getRegions()
-    // or unify it
-    /*fencesMarkerController.init().then((_) =>
-        fences.init(fencesMarkerController.fenceMarkers).then((__) =>
-            fencesMarkerController.showMarkers(fences.activeScopeMarkers))
-    );*/
-    /*fencesMarkerController.init().then((_) {
-      fencesRegionController.getRegions().then((regions) {
-        print("REGION COUNT: " + regions.length.toString());
-        fences.setRegions(regions);
-        fences.updateRegionsCounts().then((value) {
-          //fencesMarkerController.showRegions(regions);
-        });
-        fencesRegionController.getSubregions().then((subregions) {
-          fences.setSubregions(subregions);
-          fences.updateSubregionsAndCitiesCounts().then((value) {
-            fences.activeScope = 'śląskie';
-            fencesMarkerController.showSubregions(fences.activeScopeRegionUnits);
-            mapController.move(mapController.center, fences.zoom);
-          });
-        });
-      });
-
-    });*/
-    //
-
-    super.initState();
-  }
-
-  @override
-  void didChangeDependencies() {
-    //mapController = MapController();
-    //fencesMarkerController = FencesMarkerController();
-    // TODO: move fences model to build context below and find out where call provider's init func
-    fences = Provider.of<FencesModel>(context, listen: true);
-    fences.init().then((_) => fencesMarkerController.showMarkers(fences.activeScopeMarkers));
-    //fences.initFences().then((value) => print("fences initialized"));
-    /*zone.addListener(() => updatePositionAndMarker());*/
-    super.didChangeDependencies();
-  }
-
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-          child: Stack(children: <Widget>[
-            FlutterMap(
-              mapController: mapController,
-              options: MapOptions(
-                  center: LatLng(Constants.DEFAULT_POSITION.latitude, Constants.DEFAULT_POSITION.longitude),
-                  zoom: fences.zoom,
-                  minZoom: Constants.MIN_ZOOM,
-                  maxZoom: Constants.MAX_ZOOM
-              ),
-              layers: [
-                TileLayerOptions(
-                    urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                    subdomains: ['a', 'b', 'c']
+          child: Consumer<FencesModel>(
+            builder: (context, fences, child) {
+              return Stack(children: <Widget>[
+              FlutterMap(
+                mapController: mapController,
+                options: MapOptions(
+                    center: LatLng(Constants.DEFAULT_POSITION.latitude, Constants.DEFAULT_POSITION.longitude),
+                    zoom: fences.zoom,
+                    minZoom: Constants.MIN_ZOOM,
+                    maxZoom: Constants.MAX_ZOOM
                 ),
-                //CircleLayerOptions(circles: zoneMarkerController.circleMarkers)
-                PolygonLayerOptions(polygons: FencesMarkerController.polygons),
-                MarkerLayerOptions(markers: FencesMarkerController.centroids)
-              ],
-            ),
-            FencesMenuWidget(
-              //onCenterButtonClick: () => centerPositionAndMarker(),
-              onRegionDropdownChange: () => updateDisplayedRegions(),
-              onZoomChange: () => updateZoom(),
-              //onSearchButtonClick: () => updatePosition(),
-            )
-          ])
+                layers: [
+                  TileLayerOptions(
+                      urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                      subdomains: ['a', 'b', 'c']
+                  ),
+                  PolygonLayerOptions(polygons: FencesMarkerController.polygons),
+                  MarkerLayerOptions(markers: FencesMarkerController.centroids)
+                ],
+              ),
+              FencesMenuWidget(
+                onRegionDropdownChange: () => updateDisplayedRegions(fences),
+                onZoomChange: () => updateZoom(fences.zoom),
+              )
+            ]);},
+          )
       ),
     );
   }
 
-@override
-  void dispose() {
-    fences.removeListener(() => print("removed fences listener"));
-    super.dispose();
-  }
 }

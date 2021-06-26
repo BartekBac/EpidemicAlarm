@@ -15,7 +15,6 @@ class EpidemicAlarmClient {
   }
 
   List<DiagnosedCase> _parseDiagnosedCases(Uint8List responseBodyBytes) {
-    //final parsed = jsonDecode(responseBody).cast<Map<String, dynamic>>();
     final parsed = json.decode(utf8.decode(responseBodyBytes)).cast<Map<String, dynamic>>();
     return parsed.map<DiagnosedCase>((json) => DiagnosedCase.fromJson(json)).toList();
   }
@@ -27,7 +26,6 @@ class EpidemicAlarmClient {
           headers: {'Content-Type': 'application/json'}
       );
       var toReturn = _parseDiagnosedCases(response.bodyBytes);
-      print(toReturn);
       return toReturn;
     } catch(e) {
       print("Cannot fetch diagnosed cases. Error: ${e.toString()}");
@@ -41,7 +39,6 @@ class EpidemicAlarmClient {
           headers: {'Content-Type': 'application/json'}
       );
       var toReturn = _parseDiagnosedCases(response.bodyBytes);
-      print(toReturn);
       return toReturn;
     } catch(e) {
       print("Cannot fetch all active diagnosed cases. Error: ${e.toString()}");

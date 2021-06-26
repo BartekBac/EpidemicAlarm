@@ -1,6 +1,6 @@
 import 'package:epidemic_alarm/src/dto/diagnosed_case_dto.dart';
-import 'package:epidemic_alarm/src/dto/region_unit_dto.dart';
 import 'package:epidemic_alarm/src/feature/map/fences/controller/fence_marker.dart';
+import 'package:epidemic_alarm/src/feature/map/fences/controller/fences_marker_controller.dart';
 import 'package:epidemic_alarm/src/infrastructure/epidemic_alarm_client.dart';
 import 'package:epidemic_alarm/src/configuration.dart';
 import 'package:epidemic_alarm/src/infrastructure/geojson_reader.dart';
@@ -10,14 +10,16 @@ class FencesModel extends ChangeNotifier {
   EpidemicAlarmClient _epidemicAlarmClient = new EpidemicAlarmClient();
   GeojsonReader _geojsonReader = new GeojsonReader();
 
-  static final List<String> SCOPES = <String>[];
+  static final String _INIT_SCOPE_NAME = 'Ładowanie danych...';
+  static final List<String> SCOPES = <String>[_INIT_SCOPE_NAME];
   static final String GENERAL_SCOPE_NAME = "polska";
 
   double _zoom;
-  String _activeScope;
+  String _activeScope = _INIT_SCOPE_NAME;
 
   set activeScope(String value) {
     _activeScope = value;
+    notifyListeners();
   }
 
   List<DiagnosedCase> _diagnosedCases;
@@ -81,11 +83,11 @@ class FencesModel extends ChangeNotifier {
     this._subregions = fenceMarkers.where((fm) => fm.level == 5).toList();
     SCOPES.clear();
     SCOPES.add(GENERAL_SCOPE_NAME);
-    if(_regions.isNotEmpty) {
-      _regions.forEach((region) => SCOPES.add(region.name));
-    }
+    _regions.forEach((region) => SCOPES.add(region.name));
     _activeScope = SCOPES[0];
     await updateDiagnosedCaseCounts();
+    FencesMarkerController.showMarkers(_regions);
+    notifyListeners();
   }
 
   Future<void> updateDiagnosedCaseCounts() async {
