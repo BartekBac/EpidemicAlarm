@@ -52,6 +52,7 @@ class _FencesMapWidgetState extends State<FencesMapWidget> {
                       subdomains: ['a', 'b', 'c']
                   ),
                   PolygonLayerOptions(polygons: FencesMarkerController.polygons),
+                  PolylineLayerOptions(polylines: FencesMarkerController.polylines),
                   MarkerLayerOptions(markers: FencesMarkerController.centroids)
                 ],
               ),

@@ -5,9 +5,15 @@ class FencesMarkerController {
 
   static List<Polygon> polygons = <Polygon>[];
   static List<Marker> centroids = <Marker>[];
+  static List<Polyline> polylines = <Polyline>[];
 
   static void showMarkers(List<FenceMarker> fenceMarkers) {
-    polygons = fenceMarkers.map((fenceMarker) => fenceMarker.polygon).toList();
+    polygons.clear();
+    polylines.clear();
+    fenceMarkers.forEach((fenceMarker) {
+      polygons.addAll(fenceMarker.polygons);
+      polylines.addAll(fenceMarker.polylines);
+    });
     centroids = fenceMarkers.map((fenceMarker) => fenceMarker.centroidMarker).toList();
   }
 }

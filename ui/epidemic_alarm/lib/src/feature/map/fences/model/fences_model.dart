@@ -36,9 +36,9 @@ class FencesModel extends ChangeNotifier {
     _regions = <FenceMarker>[];
     _subregions = <FenceMarker>[];
     _cities = <FenceMarker>[];
-    _otherRegion = new FenceMarker(id: 0, name: "Other Region", parentId: "0", parentName: null, level: 2, centroid: null, points: null, diagnosedCasesCount: 0);
-    _otherSubregion = new FenceMarker(id: 0, name: "Other Subregion", parentId: "0", parentName: null, level: 5, centroid: null, points: null, diagnosedCasesCount: 0);
-    _otherCity = new FenceMarker(id: 0, name: "Other City", parentId: "0", parentName: null, level: 6, centroid: null, points: null, diagnosedCasesCount: 0);
+    _otherRegion = new FenceMarker(id: 0, name: "Other Region", parentId: "0", parentName: null, level: 2, centroids: null, geoSeries: null, diagnosedCasesCount: 0);
+    _otherSubregion = new FenceMarker(id: 0, name: "Other Subregion", parentId: "0", parentName: null, level: 5, centroids: null, geoSeries: null, diagnosedCasesCount: 0);
+    _otherCity = new FenceMarker(id: 0, name: "Other City", parentId: "0", parentName: null, level: 6, centroids: null, geoSeries: null, diagnosedCasesCount: 0);
   }
 
   double get zoom => _zoom;
@@ -107,8 +107,8 @@ class FencesModel extends ChangeNotifier {
               name: diagnosedCase.city,
               parentId: "", // TODO: change to bdlIds
               parentName: subregionToUpdate.parentName,
-              points: null,
-              centroid: null,
+              geoSeries: null,
+              centroids: null,
               level: 6,
               diagnosedCasesCount: 0
           );

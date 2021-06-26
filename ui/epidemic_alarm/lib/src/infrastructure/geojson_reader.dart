@@ -34,11 +34,12 @@ class GeojsonReader {
     return LatLng(lat, lng);
   }
 
-  GeoSerie _getGeoSerie(dynamic geometry) {
+  List<GeoSerie> _getGeoSeries(dynamic geometry) {
     if(geometry is GeoJsonPolygon)
-      return geometry.geoSeries.first;
+      return <GeoSerie>[geometry.geoSeries.first];
     else
-      return (geometry as GeoJsonMultiPolygon).polygons.first.geoSeries.first;
+      //return (geometry as GeoJsonMultiPolygon).polygons.first.geoSeries.first;
+      return (geometry as GeoJsonMultiPolygon).polygons.map((polygon) => polygon.geoSeries.first).toList();
   }
 
   Future<List<FenceMarker>> getFenceMarkers() async {
@@ -54,18 +55,18 @@ class GeojsonReader {
     final GeoJson geo = GeoJson();
 
     geo.processedFeatures.listen((GeoJsonFeature feature) {
-      GeoSerie geoSerie = _getGeoSerie(feature.geometry);
-      LatLng centroid = _calculateCentroid(geoSerie.geoPoints);
+      List<GeoSerie> geoSeries = _getGeoSeries(feature.geometry);
+      List<LatLng> centroids = geoSeries.map((geoSerie) => _calculateCentroid(geoSerie.geoPoints)).toList();
 
-      // TODO: bug: for some subregions are defined multipolygons etc "rybnicki" but shown is only one (and one centroid)
       FenceMarker fenceMarker = FenceMarker(
           id: feature.properties['id'],
           name: feature.properties['name'],
           parentId: feature.properties['bdlParentId'],
           parentName: feature.properties['bdlParentName'],
           level: feature.properties['level'],
-          points: geoSerie.toLatLng(),
-          centroid: centroid,
+          //points: geoSerie.toLatLng(),
+          geoSeries: geoSeries,
+          centroids: centroids,
           diagnosedCasesCount: 0
       );
       fenceMarkers.add(fenceMarker);
