@@ -36,7 +36,7 @@ class FencesModel extends ChangeNotifier {
   FenceMarker _otherCity;
 
   FencesModel() {
-    _zoom = 8.0; //Constants.DEFAULT_ZOOM;
+    _zoom = GENERAL_SCOPE_ZOOM; //Constants.DEFAULT_ZOOM;
     _regions = <FenceMarker>[];
     _subregions = <FenceMarker>[];
     _cities = <FenceMarker>[];

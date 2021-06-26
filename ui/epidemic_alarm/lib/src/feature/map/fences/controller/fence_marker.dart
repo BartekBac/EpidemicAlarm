@@ -1,3 +1,4 @@
+import 'package:epidemic_alarm/src/feature/main/controller/color_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geopoint/geopoint.dart';
@@ -15,15 +16,15 @@ class FenceMarker {
   Marker get centroidMarker => Marker(
       point: centroids.first,
       builder: (ctx) =>
-        Container(child: Text(diagnosedCasesCount.toString(), style: TextStyle(color: Colors.red, fontSize: 24),))
+        Container(child: Text(diagnosedCasesCount.toString(),textAlign: TextAlign.center, style: TextStyle(color: ColorController.getDangerTextColor(), fontSize: 24)))
   );
 
   List<Polygon> get polygons {
     return geoSeries.map((geoSerie) => Polygon(
         points: geoSerie.toLatLng(),
-        color: Colors.greenAccent.withOpacity(0.2),
+        color: ColorController.getDangerSecondaryColor(diagnosedCasesCount),
         borderStrokeWidth: 1.0,
-        borderColor: Colors.red
+        borderColor: ColorController.getDangerLineColor()
     )).toList();
   }
 
@@ -34,10 +35,8 @@ class FenceMarker {
       centroids.skip(1).forEach((centroid) {
         polylines.add(Polyline(
             points: <LatLng>[mainCentroid, centroid],
-            color: Colors.greenAccent.withOpacity(0.1),
-            borderStrokeWidth: 1,
-            borderColor: Colors.red,
-            isDotted: true
+            color: ColorController.getDangerLineColor(),
+            strokeWidth: 2
         ));
       });
     }
