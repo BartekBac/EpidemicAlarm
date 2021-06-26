@@ -5,6 +5,7 @@ import 'package:epidemic_alarm/src/infrastructure/epidemic_alarm_client.dart';
 import 'package:epidemic_alarm/src/configuration.dart';
 import 'package:epidemic_alarm/src/infrastructure/geojson_reader.dart';
 import 'package:flutter/material.dart';
+import 'package:latlong/latlong.dart';
 
 class FencesModel extends ChangeNotifier {
   EpidemicAlarmClient _epidemicAlarmClient = new EpidemicAlarmClient();
@@ -13,6 +14,9 @@ class FencesModel extends ChangeNotifier {
   static final String _INIT_SCOPE_NAME = 'Ładowanie danych...';
   static final List<String> SCOPES = <String>[_INIT_SCOPE_NAME];
   static final String GENERAL_SCOPE_NAME = "polska";
+  static final LatLng GENERAL_SCOPE_CENTROID = LatLng(52.06930693544513, 19.480313511768465);
+  static final double GENERAL_SCOPE_ZOOM = 5.75;
+  static final double SPECIFIC_SCOPE_ZOOM = 8.0;
 
   double _zoom;
   String _activeScope = _INIT_SCOPE_NAME;
@@ -32,7 +36,7 @@ class FencesModel extends ChangeNotifier {
   FenceMarker _otherCity;
 
   FencesModel() {
-    _zoom = 8.0;//Constants.DEFAULT_ZOOM;
+    _zoom = 8.0; //Constants.DEFAULT_ZOOM;
     _regions = <FenceMarker>[];
     _subregions = <FenceMarker>[];
     _cities = <FenceMarker>[];
@@ -57,6 +61,23 @@ class FencesModel extends ChangeNotifier {
     } else {
       return _subregions.where((subregion) => subregion.parentName == _activeScope).toList();
     }
+  }
+
+  LatLng get activeScopeCenter {
+    if(_activeScope == GENERAL_SCOPE_NAME) {
+      return GENERAL_SCOPE_CENTROID;
+    } else {
+      return _regions.firstWhere((region) => region.name == _activeScope).centroids.first;
+    }
+  }
+
+  double get activeScopeZoom {
+    if(_activeScope == GENERAL_SCOPE_NAME) {
+      _setZoom(GENERAL_SCOPE_ZOOM);
+    } else {
+      _setZoom(SPECIFIC_SCOPE_ZOOM);
+    }
+    return _zoom;
   }
 
   void _setZoom(double value) {

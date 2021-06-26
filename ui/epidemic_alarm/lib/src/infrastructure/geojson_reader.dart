@@ -38,7 +38,6 @@ class GeojsonReader {
     if(geometry is GeoJsonPolygon)
       return <GeoSerie>[geometry.geoSeries.first];
     else
-      //return (geometry as GeoJsonMultiPolygon).polygons.first.geoSeries.first;
       return (geometry as GeoJsonMultiPolygon).polygons.map((polygon) => polygon.geoSeries.first).toList();
   }
 
@@ -64,7 +63,6 @@ class GeojsonReader {
           parentId: feature.properties['bdlParentId'],
           parentName: feature.properties['bdlParentName'],
           level: feature.properties['level'],
-          //points: geoSerie.toLatLng(),
           geoSeries: geoSeries,
           centroids: centroids,
           diagnosedCasesCount: 0
