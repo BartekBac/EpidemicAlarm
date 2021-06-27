@@ -1,5 +1,5 @@
 import 'package:epidemic_alarm/src/feature/map/fences/model/fences_model.dart';
-import 'package:epidemic_alarm/src/feature/map/fences/ui/region_dropdown_widget.dart';
+import 'package:epidemic_alarm/src/feature/map/fences/ui/fences_dropdown_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -17,7 +17,7 @@ class FencesMenuWidget extends StatelessWidget {
           child: Stack(children: <Widget>[
             Align(
               alignment: Alignment.topCenter,
-              child: RegionDropdownWidget(onRegionDropdownChange: () => onRegionDropdownChange()),
+              child: FencesDropdownWidget(onRegionDropdownChange: () => onRegionDropdownChange()),
             ),
             Align(
               alignment: Alignment.topRight,

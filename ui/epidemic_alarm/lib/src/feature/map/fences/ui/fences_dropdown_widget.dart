@@ -2,8 +2,8 @@ import 'package:epidemic_alarm/src/feature/map/fences/model/fences_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class RegionDropdownWidget extends StatelessWidget {
-  const RegionDropdownWidget({this.onRegionDropdownChange});
+class FencesDropdownWidget extends StatelessWidget {
+  const FencesDropdownWidget({this.onRegionDropdownChange});
   final VoidCallback onRegionDropdownChange;
 
   @override
