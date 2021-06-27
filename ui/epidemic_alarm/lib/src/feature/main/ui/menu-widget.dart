@@ -34,13 +34,13 @@ class _MenuWidgetState extends State<MenuWidget> with TickerProviderStateMixin {
           controller: _tabController,
           tabs: const <Widget>[
             Tab(
-              icon: Icon(Icons.cloud_outlined),
+              icon: Icon(Icons.location_history),
             ),
             Tab(
-              icon: Icon(Icons.beach_access_sharp),
+              icon: Icon(Icons.public),
             ),
             Tab(
-              icon: Icon(Icons.brightness_5_sharp),
+              icon: Icon(Icons.stacked_bar_chart ),
             ),
           ],
         ),
