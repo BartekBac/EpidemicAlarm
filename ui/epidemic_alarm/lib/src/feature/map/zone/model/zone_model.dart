@@ -1,3 +1,4 @@
+import 'package:epidemic_alarm/src/feature/main/controller/color_controller.dart';
 import 'package:epidemic_alarm/src/infrastructure/epidemic_alarm_client.dart';
 import 'package:epidemic_alarm/src/infrastructure/geolocator_client.dart';
 import 'package:epidemic_alarm/src/configuration.dart';
@@ -29,36 +30,8 @@ class ZoneModel extends ChangeNotifier {
   double get range => _range;
   double get lat => _lat;
   double get lng => _lng;
-  Color get primaryColor {
-    if(_diagnosedCasesCount <= 0) {
-      return Colors.green;
-    }
-    if(_diagnosedCasesCount <= 10) {
-      return Colors.yellow;
-    }
-    if(_diagnosedCasesCount <= 100) {
-      return Colors.orange;
-    }
-    return Colors.red;
-  }
-  Color get secondaryColor {
-    if(_diagnosedCasesCount <= 0) {
-      return Colors.green.withOpacity(0.5);
-    }
-    if(_diagnosedCasesCount <= 1) {
-      return Colors.yellow.withOpacity(0.3);
-    }
-    if(_diagnosedCasesCount <= 10) {
-      return Colors.yellow.withOpacity(0.7);
-    }
-    if(_diagnosedCasesCount <= 50) {
-      return Colors.orange.withOpacity(0.3);
-    }
-    if(_diagnosedCasesCount <= 100) {
-      return Colors.orange.withOpacity(0.7);
-    }
-    return Colors.red.withOpacity(0.5);
-  }
+  Color get primaryColor => ColorController.getDangerPrimaryColor(_diagnosedCasesCount);
+  Color get secondaryColor => ColorController.getDangerSecondaryColor(_diagnosedCasesCount);
 
   void _setZoom(double value) {
     if(value >= Constants.MAX_ZOOM) {

@@ -1,3 +1,4 @@
+
 class DiagnosedCase {
   int id;
   DateTime diagnosisDate;
@@ -9,6 +10,9 @@ class DiagnosedCase {
   int identity;
   int institution;
   int introducer;
+  String region;
+  String subregion;
+  String city;
 
   DiagnosedCase({
       this.id,
@@ -20,7 +24,10 @@ class DiagnosedCase {
       this.locationLng,
       this.identity,
       this.institution,
-      this.introducer
+      this.introducer,
+      this.region,
+      this.subregion,
+      this.city
   });
 
   factory DiagnosedCase.fromJson(Map<String, dynamic> json) {
@@ -34,7 +41,10 @@ class DiagnosedCase {
         introducer: json['introducer'] as int,
         locationLat: json['locationLat'] as double,
         locationLng: json['locationLng'] as double,
-        status: json['status'] as int
+        status: json['status'] as int,
+        region: json['region'] as String,
+        subregion: json['subregion'] as String,
+        city: json['city'] as String
     );
   }
 }

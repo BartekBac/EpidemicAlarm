@@ -10,13 +10,14 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
+    FencesModel fencesModel = FencesModel();
+    fencesModel.init();
     return MaterialApp(
       title: _title,
       theme: ThemeData.light(),
       routes: <String, WidgetBuilder>{
         '/': (context) => ChangeNotifierProvider(
-            create: (context) => FencesModel(),
+            create: (context) => fencesModel,
             child: MainPage()
         ),
         '/xd': (context) => ChangeNotifierProvider(
