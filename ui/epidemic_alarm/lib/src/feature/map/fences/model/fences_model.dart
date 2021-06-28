@@ -1,6 +1,8 @@
 import 'package:epidemic_alarm/src/dto/diagnosed_case_dto.dart';
+import 'package:epidemic_alarm/src/feature/main/controller/color_controller.dart';
 import 'package:epidemic_alarm/src/feature/map/fences/controller/fence_marker.dart';
 import 'package:epidemic_alarm/src/feature/map/fences/controller/fences_marker_controller.dart';
+import 'package:epidemic_alarm/src/feature/ranking/model/tree-node.dart';
 import 'package:epidemic_alarm/src/infrastructure/epidemic_alarm_client.dart';
 import 'package:epidemic_alarm/src/configuration.dart';
 import 'package:epidemic_alarm/src/infrastructure/geojson_reader.dart';
@@ -61,6 +63,38 @@ class FencesModel extends ChangeNotifier {
     } else {
       return _subregions.where((subregion) => subregion.parentName == _activeScope).toList();
     }
+  }
+
+  List<TreeNodeModel> get regionsDiagnosedCasesTree {
+      List<TreeNodeModel> regionNodes = _regions
+          .where((region) => region.diagnosedCasesCount > 0)
+          .map<TreeNodeModel>((region) => TreeNodeModel(
+              name: region.name,
+              diagnosedCasesCount: region.diagnosedCasesCount,
+              color: ColorController.getDangerPrimaryColor(region.diagnosedCasesCount)
+      )).toList();
+
+      regionNodes.forEach((regionNode) {
+        regionNode.children = _subregions
+            .where((subregion) => subregion.diagnosedCasesCount > 0 && subregion.parentName == regionNode.name)
+            .map<TreeNodeModel>((subregion) => TreeNodeModel(
+                name: subregion.name,
+                diagnosedCasesCount: subregion.diagnosedCasesCount,
+                color: ColorController.getDangerPrimaryColor(subregion.diagnosedCasesCount)
+        )).toList();
+
+        regionNode.children.forEach((subregionNode) {
+          subregionNode.children = _cities
+              .where((city) => city.diagnosedCasesCount > 0 && city.parentName == subregionNode.name)
+              .map<TreeNodeModel>((city) => TreeNodeModel(
+              name: city.name,
+              diagnosedCasesCount: city.diagnosedCasesCount,
+              color: ColorController.getDangerPrimaryColor(city.diagnosedCasesCount)
+          )).toList();
+        });
+      });
+
+      return regionNodes;
   }
 
   LatLng get activeScopeCenter {
