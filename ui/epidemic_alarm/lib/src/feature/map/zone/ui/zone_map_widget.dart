@@ -21,7 +21,7 @@ class _ZoneMapWidgetState extends State<ZoneMapWidget> {
 
   void centerPositionAndMarker() {
     mapController.moveAndRotate(LatLng(zone.lat, zone.lng), mapController.zoom, 0.0);
-    updatePositionMarker();
+    updatePosition();
   }
 
   void updatePositionMarker() {
@@ -57,7 +57,7 @@ class _ZoneMapWidgetState extends State<ZoneMapWidget> {
     super.didChangeDependencies();
   }
 
-
+  //TODO: use zone model from context
 
   @override
   Widget build(BuildContext context) {
