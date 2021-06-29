@@ -1,6 +1,8 @@
 import 'package:epidemic_alarm/src/dto/diagnosed_case_dto.dart';
+import 'package:epidemic_alarm/src/feature/main/controller/color_controller.dart';
 import 'package:epidemic_alarm/src/feature/map/fences/controller/fence_marker.dart';
 import 'package:epidemic_alarm/src/feature/map/fences/controller/fences_marker_controller.dart';
+import 'package:epidemic_alarm/src/feature/ranking/model/tree-node.dart';
 import 'package:epidemic_alarm/src/infrastructure/epidemic_alarm_client.dart';
 import 'package:epidemic_alarm/src/configuration.dart';
 import 'package:epidemic_alarm/src/infrastructure/geojson_reader.dart';
@@ -61,6 +63,43 @@ class FencesModel extends ChangeNotifier {
     } else {
       return _subregions.where((subregion) => subregion.parentName == _activeScope).toList();
     }
+  }
+
+  List<TreeNodeModel> get regionsDiagnosedCasesTree {
+      List<TreeNodeModel> regionNodes = _regions
+          .where((region) => region.diagnosedCasesCount > 0)
+          .map<TreeNodeModel>((region) => TreeNodeModel(
+              name: region.name,
+              diagnosedCasesCount: region.diagnosedCasesCount
+      )).toList();
+
+      regionNodes.forEach((regionNode) {
+        List<TreeNodeModel> subregionsList = _subregions
+            .where((subregion) => subregion.diagnosedCasesCount > 0 && subregion.parentName == regionNode.name)
+            .map<TreeNodeModel>((subregion) => TreeNodeModel(
+                name: subregion.name,
+                diagnosedCasesCount: subregion.diagnosedCasesCount
+        )).toList();
+
+        subregionsList.sort((r1, r2) => r1.diagnosedCasesCount.compareTo(r2.diagnosedCasesCount)*-1); // sort descending
+
+        regionNode.children = subregionsList;
+
+        regionNode.children.forEach((subregionNode) {
+          List<TreeNodeModel> citiesList = _cities
+              .where((city) => city.diagnosedCasesCount > 0 && city.parentName == (subregionNode as TreeNodeModel).name)
+              .map<TreeNodeModel>((city) => TreeNodeModel(
+              name: city.name,
+              diagnosedCasesCount: city.diagnosedCasesCount
+          )).toList();
+
+          citiesList.sort((r1, r2) => r1.diagnosedCasesCount.compareTo(r2.diagnosedCasesCount)*-1); // sort descending
+
+          subregionNode.children = citiesList;
+        });
+      });
+
+      return regionNodes;
   }
 
   LatLng get activeScopeCenter {
@@ -127,7 +166,7 @@ class FencesModel extends ChangeNotifier {
               id: this._cities.length,
               name: diagnosedCase.city,
               parentId: "", // TODO: change to bdlIds
-              parentName: subregionToUpdate.parentName,
+              parentName: subregionToUpdate.name,
               geoSeries: null,
               centroids: null,
               level: 6,

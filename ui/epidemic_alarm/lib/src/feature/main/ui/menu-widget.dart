@@ -2,6 +2,7 @@ import 'package:epidemic_alarm/src/feature/map/fences/model/fences_model.dart';
 import 'package:epidemic_alarm/src/feature/map/fences/ui/fences_map_widget.dart';
 import 'package:epidemic_alarm/src/feature/map/zone/model/zone_model.dart';
 import 'package:epidemic_alarm/src/feature/map/zone/ui/zone_map_widget.dart';
+import 'package:epidemic_alarm/src/feature/ranking/ui/ranking-listtree-widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -60,7 +61,7 @@ class _MenuWidgetState extends State<MenuWidget> with TickerProviderStateMixin {
               child: FencesMapWidget()
             ),
             Center(
-              child: Text("It's sunny here"),
+              child: RankingListTreeWidget(),
             ),
           ],
         ),

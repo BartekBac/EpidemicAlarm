@@ -191,6 +191,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.6.1"
+  list_treeview:
+    dependency: "direct main"
+    description:
+      name: list_treeview
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.3.0"
   lists:
     dependency: transitive
     description:
