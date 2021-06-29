@@ -9,6 +9,9 @@ public class DiagnosedCaseDTO {
     public int status;
     public Double locationLat;
     public Double locationLng;
+    public String region;
+    public String subregion;
+    public String city;
     public Long identity;
     public Long institution;
     public Long introducer;

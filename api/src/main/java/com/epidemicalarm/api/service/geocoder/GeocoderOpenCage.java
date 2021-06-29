@@ -15,7 +15,7 @@ import java.util.Locale;
 public class GeocoderOpenCage implements IGeocoderStrategy {
 
     private static final String GEOCODING_RESOURCE = "https://api.opencagedata.com/geocode/v1/json";
-    private static final String API_KEY = "7e9a4820669d4967993c48492e0c2d23";
+    private static final String API_KEY = "2cd8590bedac4078bc585be0360a9cae";
 
     private final double scoreLowerLimit = 5.0;
     
@@ -54,7 +54,12 @@ public class GeocoderOpenCage implements IGeocoderStrategy {
                     position.city = city.asText();
                 } else {
                     city = item.at("/components/town");
-                    if(city != null) position.city = city.asText();
+                    if(city != null && !city.asText().isEmpty()) {
+                        position.city = city.asText();
+                    } else {
+                        city = item.at("/components/village");
+                        if(city != null) position.city = city.asText();
+                    }
                 }
 
                 JsonNode region = item.at("/components/state");
