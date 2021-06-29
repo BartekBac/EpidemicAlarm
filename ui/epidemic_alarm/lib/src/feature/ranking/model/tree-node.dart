@@ -5,8 +5,7 @@ class TreeNodeModel extends NodeData {
   /// Other properties that you want to define
   final String name;
   final int diagnosedCasesCount;
-  final Color color;
 
-  TreeNodeModel({this.name, this.diagnosedCasesCount, this.color}) : super();
+  TreeNodeModel({this.name, this.diagnosedCasesCount}) : super();
   ///...
 }

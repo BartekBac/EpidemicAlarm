@@ -70,27 +70,32 @@ class FencesModel extends ChangeNotifier {
           .where((region) => region.diagnosedCasesCount > 0)
           .map<TreeNodeModel>((region) => TreeNodeModel(
               name: region.name,
-              diagnosedCasesCount: region.diagnosedCasesCount,
-              color: ColorController.getDangerPrimaryColor(region.diagnosedCasesCount)
+              diagnosedCasesCount: region.diagnosedCasesCount
       )).toList();
 
       regionNodes.forEach((regionNode) {
-        regionNode.children = _subregions
+        List<TreeNodeModel> subregionsList = _subregions
             .where((subregion) => subregion.diagnosedCasesCount > 0 && subregion.parentName == regionNode.name)
             .map<TreeNodeModel>((subregion) => TreeNodeModel(
                 name: subregion.name,
-                diagnosedCasesCount: subregion.diagnosedCasesCount,
-                color: ColorController.getDangerPrimaryColor(subregion.diagnosedCasesCount)
+                diagnosedCasesCount: subregion.diagnosedCasesCount
         )).toList();
 
+        subregionsList.sort((r1, r2) => r1.diagnosedCasesCount.compareTo(r2.diagnosedCasesCount)*-1); // sort descending
+
+        regionNode.children = subregionsList;
+
         regionNode.children.forEach((subregionNode) {
-          subregionNode.children = _cities
-              .where((city) => city.diagnosedCasesCount > 0 && city.parentName == subregionNode.name)
+          List<TreeNodeModel> citiesList = _cities
+              .where((city) => city.diagnosedCasesCount > 0 && city.parentName == (subregionNode as TreeNodeModel).name)
               .map<TreeNodeModel>((city) => TreeNodeModel(
               name: city.name,
-              diagnosedCasesCount: city.diagnosedCasesCount,
-              color: ColorController.getDangerPrimaryColor(city.diagnosedCasesCount)
+              diagnosedCasesCount: city.diagnosedCasesCount
           )).toList();
+
+          citiesList.sort((r1, r2) => r1.diagnosedCasesCount.compareTo(r2.diagnosedCasesCount)*-1); // sort descending
+
+          subregionNode.children = citiesList;
         });
       });
 
@@ -161,7 +166,7 @@ class FencesModel extends ChangeNotifier {
               id: this._cities.length,
               name: diagnosedCase.city,
               parentId: "", // TODO: change to bdlIds
-              parentName: subregionToUpdate.parentName,
+              parentName: subregionToUpdate.name,
               geoSeries: null,
               centroids: null,
               level: 6,
