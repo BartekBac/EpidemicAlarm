@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:epidemic_alarm/src/feature/main/controller/color_controller.dart';
 import 'package:epidemic_alarm/src/feature/map/fences/model/fences_model.dart';
 import 'package:epidemic_alarm/src/feature/ranking/model/tree-node.dart';
@@ -12,7 +10,6 @@ import 'package:provider/provider.dart';
 class RankingListTreeWidget extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
     return _RankingListTreeWidgetState();
   }
 }
@@ -34,19 +31,6 @@ class _RankingListTreeWidgetState extends State<RankingListTreeWidget>
   @override
   void dispose() {
     super.dispose();
-  }
-
-
-  void delete(dynamic item) {
-    _controller.removeItem(item);
-  }
-
-  void select(dynamic item) {
-    _controller.selectItem(item);
-  }
-
-  void selectAllChild(dynamic item) {
-    _controller.selectAllChild(item);
   }
 
   Color _getItemBackgroundColor(int level) {
@@ -97,7 +81,6 @@ class _RankingListTreeWidgetState extends State<RankingListTreeWidget>
       padding: EdgeInsets.all(0),
       itemBuilder: (BuildContext context, NodeData data) {
         TreeNodeModel item = data as TreeNodeModel;
-//              double width = MediaQuery.of(context).size.width;
         double offsetX = item.level * 16.0;
         return Container(
           height: 54,
@@ -139,12 +122,6 @@ class _RankingListTreeWidgetState extends State<RankingListTreeWidget>
             ],
           ),
         );
-      },
-      onTap: (NodeData data) {
-        print('index = ${data.index}');
-      },
-      onLongPress: (data) {
-        delete(data);
       },
       controller: _controller,
     );
