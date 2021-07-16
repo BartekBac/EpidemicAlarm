@@ -1,3 +1,4 @@
+import 'package:epidemic_alarm/src/feature/main/controller/color_controller.dart';
 import 'package:epidemic_alarm/src/feature/map/zone/model/zone_model.dart';
 import 'package:epidemic_alarm/src/feature/map/zone/ui/zone_range_dropdown_widget.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,18 @@ class ZoneMenuWidget extends StatelessWidget {
   final VoidCallback onSearchButtonClick;
   final VoidCallback onRangeDropdownChange;
   final VoidCallback onZoomChange;
+
+  IconData getDiagnosedCasesIcon(int count) {
+    IconData icon = Icons.done_outline;
+    if(count > 0) {
+      icon = Icons.warning;
+    }
+    return icon;
+  }
+
+  String getDiagnosedCasesString(int count) {
+    return count < 0 ? "0" : count.toString();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +69,7 @@ class ZoneMenuWidget extends StatelessWidget {
                 children: [
                   FloatingActionButton(
                       child: Icon(Icons.search),
-                      onPressed: () => mapZone.positionCenter().then((value) => onSearchButtonClick())
+                      onPressed: () => onSearchButtonClick()
                   ),
                   Container(
                     width: 4,
@@ -64,9 +77,40 @@ class ZoneMenuWidget extends StatelessWidget {
                   ),
                   FloatingActionButton(
                       child: Icon(Icons.my_location),
-                      onPressed: () => mapZone.positionCenter().then((value) => onCenterButtonClick())
+                      onPressed: () => onCenterButtonClick()
                   ),
                 ],
+              ),
+            ),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: Container(
+                width: 75.0,
+                height: 30.0,
+                color: Colors.black54,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(getDiagnosedCasesString(mapZone.diagnosedCasesCount),
+                             style: TextStyle(
+                                color: ColorController.getDangerPrimaryColor(mapZone.diagnosedCasesCount),
+                                fontSize: 25.0,
+                                fontWeight: FontWeight.bold
+                            )
+                        ),
+                        Container(
+                          width: 4.0,
+                          height: 1.0,
+                        ),
+                        Icon(getDiagnosedCasesIcon(mapZone.diagnosedCasesCount),
+                             color: ColorController.getDangerPrimaryColor(mapZone.diagnosedCasesCount)),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ]),

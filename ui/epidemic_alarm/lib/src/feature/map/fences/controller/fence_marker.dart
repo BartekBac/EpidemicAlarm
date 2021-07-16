@@ -16,7 +16,7 @@ class FenceMarker {
   Marker get centroidMarker => Marker(
       point: centroids.first,
       builder: (ctx) =>
-        Container(child: Text(diagnosedCasesCount.toString(),textAlign: TextAlign.center, style: TextStyle(color: ColorController.getDangerTextColor(), fontSize: 24)))
+        Text(diagnosedCasesCount.toString(), textWidthBasis: TextWidthBasis.longestLine, textAlign: TextAlign.center, softWrap: false, style: TextStyle(color: ColorController.getDangerTextColor(), fontSize: 18, fontWeight: FontWeight.bold))
   );
 
   List<Polygon> get polygons {

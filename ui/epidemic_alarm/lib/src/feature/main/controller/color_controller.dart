@@ -39,6 +39,6 @@ class ColorController {
   }
 
   static Color getDangerLineColor() {
-    return Colors.black45;
+    return Colors.black26;
   }
 }

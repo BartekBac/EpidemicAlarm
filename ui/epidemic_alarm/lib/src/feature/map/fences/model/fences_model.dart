@@ -73,6 +73,8 @@ class FencesModel extends ChangeNotifier {
               diagnosedCasesCount: region.diagnosedCasesCount
       )).toList();
 
+      regionNodes.sort((r1, r2) => r1.diagnosedCasesCount.compareTo(r2.diagnosedCasesCount)*-1);
+
       regionNodes.forEach((regionNode) {
         List<TreeNodeModel> subregionsList = _subregions
             .where((subregion) => subregion.diagnosedCasesCount > 0 && subregion.parentName == regionNode.name)

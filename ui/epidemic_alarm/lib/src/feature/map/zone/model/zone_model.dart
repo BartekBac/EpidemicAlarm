@@ -3,6 +3,7 @@ import 'package:epidemic_alarm/src/infrastructure/epidemic_alarm_client.dart';
 import 'package:epidemic_alarm/src/infrastructure/geolocator_client.dart';
 import 'package:epidemic_alarm/src/configuration.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:latlong/latlong.dart';
 
 class ZoneModel extends ChangeNotifier {
@@ -30,6 +31,7 @@ class ZoneModel extends ChangeNotifier {
   double get range => _range;
   double get lat => _lat;
   double get lng => _lng;
+  int get diagnosedCasesCount => _diagnosedCasesCount;
   Color get primaryColor => ColorController.getDangerPrimaryColor(_diagnosedCasesCount);
   Color get secondaryColor => ColorController.getDangerSecondaryColor(_diagnosedCasesCount);
 
@@ -90,13 +92,8 @@ class ZoneModel extends ChangeNotifier {
   }
 
   Future<void> positionCenter() async {
-    await GeolocatorClient.getCurrentPosition()
-        .then((value) {
-          positionTo(LatLng(value.latitude, value.longitude));
-        })
-        .catchError((e) {
-          print("Got error: ${e}");
-        });
+    Position position = await GeolocatorClient.getCurrentPosition();
+    await positionTo(LatLng(position.latitude, position.longitude));
   }
 
   Future<void> positionTo(LatLng position) async {

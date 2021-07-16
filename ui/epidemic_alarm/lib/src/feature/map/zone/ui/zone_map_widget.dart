@@ -20,8 +20,10 @@ class _ZoneMapWidgetState extends State<ZoneMapWidget> {
   ZoneMarkerController zoneMarkerController;
 
   void centerPositionAndMarker() {
-    mapController.moveAndRotate(LatLng(zone.lat, zone.lng), mapController.zoom, 0.0);
-    updatePosition();
+    zone.positionCenter().then((value) {
+      mapController.moveAndRotate(LatLng(zone.lat, zone.lng), mapController.zoom, 0.0);
+      updatePositionMarker();
+    });
   }
 
   void updatePositionMarker() {
