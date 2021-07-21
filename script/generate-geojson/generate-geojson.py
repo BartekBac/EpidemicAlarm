@@ -13,10 +13,11 @@ def parseGPowName(name):
 powIgnoreNames = ["Powiat m.Wałbrzych do 2002", "Powiat warszawski"]
   
 # Opening JSON files
-f_woj = open('bdl-woj.json', encoding="utf8")
-f_pow = open('bdl-pow.json', encoding="utf8")
-fg_woj = open('wojewodztwa-min.geojson', encoding="utf8")
-fg_pow = open('powiaty-min.geojson', encoding="utf8")
+
+f_woj = open('../data/bdl-woj.json', encoding="utf8")
+f_pow = open('../data/bdl-pow.json', encoding="utf8")
+fg_woj = open('../data/wojewodztwa-min.geojson', encoding="utf8")
+fg_pow = open('../data/powiaty-min.geojson', encoding="utf8")
   
 # returns JSON object as a dictionary
 json_woj = json.load(f_woj)
@@ -122,7 +123,7 @@ for gpow in gjson_pow['features']:
             gpow['properties']={"id": int(gpowId), "name": gpowName, "level": 5, "bdlId": pow['id'], "bdlName": pow['name'], "bdlParentId": pow['parentId'], "bdlParentName": pow['parentName']}
             #print(gpow['properties'])
 
-with open('pow.geojson', 'w', encoding='utf-8') as fp:
+with open('../result/polygons.geojson', 'w', encoding='utf-8') as fp:
     json.dump(gjson_pow, fp, ensure_ascii=False)
 
 # check skipped rows

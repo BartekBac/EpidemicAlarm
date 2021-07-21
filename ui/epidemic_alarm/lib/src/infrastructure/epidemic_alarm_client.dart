@@ -39,6 +39,7 @@ class EpidemicAlarmClient {
           headers: {'Content-Type': 'application/json'}
       );
       var toReturn = _parseDiagnosedCases(response.bodyBytes);
+      print("Fetched diagnosed cases: " + toReturn.length.toString());
       return toReturn;
     } catch(e) {
       print("Cannot fetch all active diagnosed cases. Error: ${e.toString()}");
